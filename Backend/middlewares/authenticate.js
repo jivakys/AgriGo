@@ -1,11 +1,19 @@
+const jwt = require("jsonwebtoken");
 
 const authenticate = (req, res, next) => {
-  if (req.session && req.session.user) {
-    req.body.userId = req.session.user.userID;
-    req.user = req.session.user;
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
     next();
-  } else {
-    res.status(401).send({ message: "Unauthorized access. Please login first!" });
+  } catch (error) {
+    console.error("Authentication error:", error);
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
 

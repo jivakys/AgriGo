@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to agriGo.");
 });
 
-app.use("/auth/user", userRouter);
+app.use("/user", userRouter);
 app.use("/products", productRouter);
 app.use("/order", orderRouter);
 

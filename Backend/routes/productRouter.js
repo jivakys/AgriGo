@@ -42,9 +42,22 @@ productRouter.get("/:id", async (req, res) => {
 // Create a new product (farmer only)
 productRouter.post("/", farmerAuth, async (req, res) => {
   try {
+    // console.log("Request body:", req.body);
+    // console.log("Request headers:", req.headers);
+    // console.log("User from token:", req.user);
+
+    if (!req.body) {
+      return res.status(400).json({ message: "Request body is missing" });
+    }
+
     const { name, description, price, quantity, unit, category, images } =
       req.body;
-    const farmerId = req.user._id;
+    const farmerId = req.user.userID;
+
+    // Validate required fields
+    if (!name || !description || !price || !quantity || !unit || !category) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
 
     const product = new ProductModel({
       name,
@@ -53,13 +66,14 @@ productRouter.post("/", farmerAuth, async (req, res) => {
       quantity,
       unit,
       category,
-      images,
+      images: images || [],
       farmerId,
     });
 
     await product.save();
     res.status(201).json({ message: "Product created successfully", product });
   } catch (error) {
+    console.error("Product creation error:", error);
     res
       .status(500)
       .json({ message: "Error creating product", error: error.message });
@@ -94,14 +108,27 @@ productRouter.put("/:id", farmerAuth, async (req, res) => {
       isAvailable,
     } = req.body;
     const productId = req.params.id;
-    const farmerId = req.user._id;
+    const farmerId = req.user.userID;
 
-    const product = await ProductModel.findOne({ _id: productId, farmerId });
+    console.log("Update request details:", {
+      productId,
+      farmerId,
+      requestBody: req.body,
+    });
 
-    if (!product) {
-      return res
-        .status(404)
-        .json({ message: "Product not found or unauthorized" });
+    // First check if the product exists
+    const existingProduct = await ProductModel.findById(productId);
+    if (!existingProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Then check if it belongs to the farmer
+    if (existingProduct.farmerId.toString() !== farmerId) {
+      return res.status(403).json({
+        message: "Unauthorized: Product does not belong to this farmer",
+        productFarmerId: existingProduct.farmerId,
+        requestingFarmerId: farmerId,
+      });
     }
 
     const updatedProduct = await ProductModel.findByIdAndUpdate(
@@ -113,7 +140,7 @@ productRouter.put("/:id", farmerAuth, async (req, res) => {
         quantity,
         unit,
         category,
-        images,
+        images: images || existingProduct.images,
         isAvailable,
       },
       { new: true }
@@ -124,9 +151,11 @@ productRouter.put("/:id", farmerAuth, async (req, res) => {
       product: updatedProduct,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error updating product", error: error.message });
+    console.error("Product update error:", error);
+    res.status(500).json({
+      message: "Error updating product",
+      error: error.message,
+    });
   }
 });
 
@@ -134,22 +163,39 @@ productRouter.put("/:id", farmerAuth, async (req, res) => {
 productRouter.delete("/:id", farmerAuth, async (req, res) => {
   try {
     const productId = req.params.id;
-    const farmerId = req.user._id;
+    const farmerId = req.user.userID;
 
-    const product = await ProductModel.findOne({ _id: productId, farmerId });
+    console.log("Delete request details:", {
+      productId,
+      farmerId,
+    });
 
-    if (!product) {
-      return res
-        .status(404)
-        .json({ message: "Product not found or unauthorized" });
+    // First check if the product exists
+    const existingProduct = await ProductModel.findById(productId);
+    if (!existingProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Then check if it belongs to the farmer
+    if (existingProduct.farmerId.toString() !== farmerId) {
+      return res.status(403).json({
+        message: "Unauthorized: Product does not belong to this farmer",
+        productFarmerId: existingProduct.farmerId,
+        requestingFarmerId: farmerId,
+      });
     }
 
     await ProductModel.findByIdAndDelete(productId);
-    res.status(200).json({ message: "Product deleted successfully" });
+    res.status(200).json({
+      message: "Product deleted successfully",
+      deletedProduct: existingProduct,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error deleting product", error: error.message });
+    console.error("Product deletion error:", error);
+    res.status(500).json({
+      message: "Error deleting product",
+      error: error.message,
+    });
   }
 });
 

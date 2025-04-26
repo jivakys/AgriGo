@@ -65,10 +65,9 @@ userRouter.post("/login", async (req, res) => {
       });
     }
 
-    // Generate tokens
     const accessToken = jwt.sign(
       { userID: user._id, role: user.role, name: user.name },
-      process.env.SECRET_KEY,
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
