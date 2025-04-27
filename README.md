@@ -106,8 +106,8 @@ AgriGo/
    ```
 
 5. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:3000
+   - Frontend: [https://agrigo-frontend.vercel.app/](https://agrigo-frontend.vercel.app/)
+   - Backend API: [https://agrigo-backend.onrender.com](https://agrigo-backend.onrender.com)
 
 ## API Endpoints
 
