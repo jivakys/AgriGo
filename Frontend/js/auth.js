@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const password = document.getElementById("password").value;
 
       try {
-        const response = await fetch("/auth/user/login", {
+        const response = await fetch("http://localhost:3000/auth/user/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -64,14 +64,32 @@ document.addEventListener("DOMContentLoaded", function () {
     signupForm.addEventListener("submit", async function (e) {
       e.preventDefault();
 
+      // Get form values
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      // Validate password match
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      // Validate password strength
+      if (password.length < 6) {
+        alert("Password must be at least 6 characters long!");
+        return;
+      }
+
+      // Prepare form data
       const formData = {
         name: document.getElementById("name").value,
         email: document.getElementById("email").value,
         phone: document.getElementById("phone").value,
-        password: document.getElementById("password").value,
+        password: password,
         role: document.getElementById("role").value,
       };
 
+      // Add farmer-specific data if role is farmer
       if (formData.role === "farmer") {
         formData.farmInfo = {
           farmName: document.getElementById("farmName").value,
@@ -80,8 +98,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       try {
+        console.log("Sending signup request with data:", formData);
+
         const response = await fetch(
-          "http://localhost:6666/auth/user/register",
+          "http://localhost:3000/auth/user/register",
           {
             method: "POST",
             headers: {
@@ -92,6 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         const data = await response.json();
+        console.log("Signup response:", data);
 
         if (response.ok) {
           alert("Registration successful! Please login.");
@@ -100,8 +121,8 @@ document.addEventListener("DOMContentLoaded", function () {
           alert(data.message || "Registration failed");
         }
       } catch (error) {
-        console.error("Error:", error);
-        alert("An error occurred during registration");
+        console.error("Signup error:", error);
+        alert("An error occurred during registration. Please try again.");
       }
     });
   }
