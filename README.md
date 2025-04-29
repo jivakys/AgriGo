@@ -18,8 +18,6 @@ AgriGo is a web-based platform that connects farmers directly with consumers, pr
 
   - Browse products
   - Place orders
-  - Track deliveries
-  - View order history
 
 - **Product Management**
   - Add new products
