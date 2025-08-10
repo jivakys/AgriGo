@@ -43,7 +43,6 @@ userRouter.post("/register", async (req, res) => {
   }
 });
 
-// .....User Login part start..... //
 userRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -99,7 +98,6 @@ userRouter.post("/login", async (req, res) => {
   }
 });
 
-// User logout route
 userRouter.post("/logout", async (req, res) => {
   try {
     const token = req.headers.authorization;
