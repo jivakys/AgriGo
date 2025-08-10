@@ -6,7 +6,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const userRouter = express.Router();
 
-// ....User Registration part start.... //
 userRouter.post("/register", async (req, res) => {
   const { name, email, password, phone, role, farmInfo } = req.body;
 
@@ -31,7 +30,7 @@ userRouter.post("/register", async (req, res) => {
     await newUser.save();
 
     return res.status(200).send({
-      message: "User registered successfully",
+      message: "User Registered Successfully",
       user: {
         userID: newUser._id,
         name: newUser.name,
