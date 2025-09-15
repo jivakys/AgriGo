@@ -16,7 +16,6 @@ app.use(
   })
 );
 
-// Then parse JSON
 app.use(express.json());
 
 // Basic test route
