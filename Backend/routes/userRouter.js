@@ -22,6 +22,8 @@ userRouter.post("/register", async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      otp,
+      otpExpiry,
       phone,
       role,
       farmInfo,
@@ -43,7 +45,7 @@ userRouter.post("/register", async (req, res) => {
   }
 });
 
-userRouter.post("/login", async (req, res) => {
+userRouter.post("/login-password", async (req, res) => {
   const { email, password } = req.body;
 
   try {
