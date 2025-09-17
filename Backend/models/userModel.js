@@ -3,21 +3,24 @@ const userSchema = mongoose.Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true },
-    password: { type: String, required: true },
+    password: { type: String },
+    otp: { type: String },
+    otpExpiry: { type: Date },
     phone: { type: String, required: true },
     role: { type: String, enum: ["farmer", "consumer"], default: "consumer" },
-   
     farmInfo: {
-        farmName: String,
-        products: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Product'
-        }],
+      farmName: String,
+      products: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+        },
+      ],
     },
     createdAt: {
-        type: Date,
-        default: Date.now
-    }
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     versionKey: false,
