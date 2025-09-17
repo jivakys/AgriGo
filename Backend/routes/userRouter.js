@@ -4,6 +4,7 @@ const { UserModel } = require("../models/userModel");
 const { TokenModel } = require("../models/tokenModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { sendEmail } = require("../utils/sendmail");
 const userRouter = express.Router();
 
 userRouter.post("/register", async (req, res) => {
