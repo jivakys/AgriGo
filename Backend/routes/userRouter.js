@@ -77,7 +77,6 @@ userRouter.post("/login-password", async (req, res) => {
       { expiresIn: "30d" }
     );
 
-    // Save tokens in DB
     await TokenModel.findOneAndUpdate(
       { userId: user._id },
       { accessToken, refreshToken },
@@ -98,6 +97,79 @@ userRouter.post("/login-password", async (req, res) => {
   } catch (error) {
     res.status(500).send({ message: "Internal error", error: error.message });
   }
+});
+
+userRouter.post("/login-otp", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(400).send({
+        error: "User not found, please register",
+        OK: false,
+      });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
+    user.otp = hashedOtp;
+    user.otpExpiry = Date.now() + 5 * 60 * 1000;
+    await user.save();
+
+    await sendEmail(email, "Your OTP Code", `Your OTP is: ${otp}`);
+
+    res.json({ message: "OTP sent to email" });
+  } catch (error) {
+    res.status(500).send({ message: "Internal error", error: error.message });
+  }
+});
+
+userRouter.post("/verify-otp", async (req, res) => {
+  const { email, otp } = req.body;
+
+  const user = await UserModel.findOne({ email });
+  if (!user) return res.status(400).json({ error: "User not found" });
+
+  if (Date.now() > user.otpExpiry)
+    return res.status(400).json({ error: "OTP expired" });
+
+  const isMatch = await bcrypt.compare(otp, user.otp);
+  if (!isMatch) return res.status(400).json({ error: "Invalid OTP" });
+
+  const accessToken = jwt.sign(
+    { userID: user._id, role: user.role, name: user.name },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  const refreshToken = jwt.sign(
+    { userID: user._id, role: user.role, name: user.name },
+    process.env.REFRESH_SECRETKEY,
+    { expiresIn: "30d" }
+  );
+
+  await TokenModel.findOneAndUpdate(
+    { userId: user._id },
+    { accessToken, refreshToken },
+    { upsert: true }
+  );
+
+  user.otp = undefined;
+  user.otpExpiry = undefined;
+
+  return res.status(200).send({
+    message: "Login successful",
+    token: accessToken,
+    refresh_token: refreshToken,
+    user: {
+      userID: user._id,
+      name: user.name,
+      role: user.role,
+    },
+    OK: true,
+  });
 });
 
 userRouter.post("/logout", async (req, res) => {
