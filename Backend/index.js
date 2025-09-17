@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { connection } = require("./config/db");
@@ -5,7 +6,6 @@ const { userRouter } = require("./routes/userRouter");
 const { productRouter } = require("./routes/productRouter");
 const { orderRouter } = require("./routes/orderRouter");
 const app = express();
-require("dotenv").config();
 
 // Enable CORS first
 app.use(

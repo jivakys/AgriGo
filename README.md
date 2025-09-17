@@ -87,11 +87,38 @@ AgriGo/
 
    - Create a `.env` file in the Backend directory
    - Add the following variables:
-     ```
-     PORT=3000
-     MONGODB_URI=your_mongodb_connection_string
-     JWT_SECRET=your_jwt_secret
-     ```
+    ```
+    PORT=3000
+    MONGODB_URI=your_mongodb_connection_string
+    JWT_SECRET=your_jwt_secret
+    # Nodemailer (Gmail example)
+    NODEMAILER_EMAIL_USER=your_email@gmail.com
+    NODEMAILER_EMAIL_PASSWORD=your_app_password
+    # Optional: override SMTP host/port/secure
+    # NODEMAILER_HOST=smtp.gmail.com
+    # NODEMAILER_PORT=465
+    # NODEMAILER_SECURE=true
+    ```
+
+### Gmail App Passwords (to fix "Application-specific password required")
+
+If you see an error like:
+
+```
+Invalid login: 534-5.7.9 Application-specific password required
+```
+
+Gmail blocks basic password auth when 2-Step Verification is enabled. Create an App Password:
+
+1. Enable 2-Step Verification on your Google Account.
+2. Go to `https://myaccount.google.com/apppasswords`.
+3. Choose App: "Mail", Device: "Other", name it (e.g., AgriGo Backend).
+4. Copy the 16-character password and set it as `NODEMAILER_EMAIL_PASSWORD` in your `.env`.
+
+Alternatively, use a dedicated SMTP provider:
+
+- Mailersend, SendGrid, Mailgun, SES
+- Set `NODEMAILER_HOST`, `NODEMAILER_PORT`, `NODEMAILER_SECURE`, and provider credentials.
 
 4. **Start the development servers**
 
