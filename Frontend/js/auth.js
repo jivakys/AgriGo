@@ -20,45 +20,141 @@ document.addEventListener("DOMContentLoaded", function () {
   // Handle login form submission
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {
+    // Handle login method toggle
+    const passwordLogin = document.getElementById("passwordLogin");
+    const otpLogin = document.getElementById("otpLogin");
+    const passwordFields = document.getElementById("passwordFields");
+    const otpFields = document.getElementById("otpFields");
+    const loginBtn = document.getElementById("loginBtn");
+    const loginBtnText = document.getElementById("loginBtnText");
+    const loginBtnIcon = document.getElementById("loginBtnIcon");
+
+    // Toggle between password and OTP login
+    function toggleLoginMethod() {
+      if (passwordLogin.checked) {
+        passwordFields.classList.remove("d-none");
+        otpFields.classList.add("d-none");
+        document.getElementById("password").required = true;
+        loginBtnText.textContent = "Login";
+        loginBtnIcon.innerHTML = '<i class="fas fa-sign-in-alt"></i>';
+      } else {
+        passwordFields.classList.add("d-none");
+        otpFields.classList.remove("d-none");
+        document.getElementById("password").required = false;
+        loginBtnText.textContent = "Send OTP";
+        loginBtnIcon.innerHTML = '<i class="fas fa-envelope"></i>';
+      }
+    }
+
+    passwordLogin.addEventListener("change", toggleLoginMethod);
+    otpLogin.addEventListener("change", toggleLoginMethod);
+
+    // Initialize on page load
+    toggleLoginMethod();
+
+    // Handle form submission
     loginForm.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      const isPasswordLogin = passwordLogin.checked;
+
+      if (!email) {
+        alert("Please enter your email address");
+        return;
+      }
 
       try {
-        const response = await fetch(
-          "https://agrigo-backend.onrender.com/auth/user/login",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
+        if (isPasswordLogin) {
+          // Password login
+          const password = document.getElementById("password").value;
+          
+          if (!password) {
+            alert("Please enter your password");
+            return;
           }
-        );
 
-        const data = await response.json();
+          const response = await fetch(
+            "https://agrigo-backend.onrender.com/auth/user/login-password",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email, password }),
+            }
+          );
 
-        if (response.ok) {
-          // Store token and user info
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
+          const data = await response.json();
 
-          // Redirect based on role
-          if (data.user.role === "farmer") {
-            window.location.href = "farmer-dashboard.html";
+          if (response.ok) {
+            // Store token and user info
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+
+            // Redirect based on role
+            if (data.user.role === "farmer") {
+              window.location.href = "farmer-dashboard.html";
+            } else {
+              window.location.href = "products.html";
+            }
           } else {
-            window.location.href = "products.html";
+            showAlert("danger", data.error || "Login failed");
           }
         } else {
-          alert(data.message || "Login failed");
+          // OTP login
+          const response = await fetch(
+            "https://agrigo-backend.onrender.com/auth/user/login-otp",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email }),
+            }
+          );
+
+          const data = await response.json();
+
+          if (response.ok) {
+            // Store email for OTP verification page
+            localStorage.setItem("otpEmail", email);
+            
+            showAlert("success", "OTP sent successfully! Redirecting to verification page...");
+            
+            // Redirect to OTP verification page
+            setTimeout(() => {
+              window.location.href = `otp-verification.html?email=${encodeURIComponent(email)}`;
+            }, 1500);
+          } else {
+            showAlert("danger", data.error || "Failed to send OTP");
+          }
         }
       } catch (error) {
         console.error("Error:", error);
-        alert("An error occurred during login");
+        showAlert("danger", "An error occurred during login");
       }
     });
+
+    // Show alert messages
+    function showAlert(type, message) {
+      // Remove existing alerts
+      const existingAlert = document.querySelector('.alert');
+      if (existingAlert && !existingAlert.classList.contains('alert-info')) {
+        existingAlert.remove();
+      }
+
+      // Create new alert
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+
+      // Insert alert before the form
+      loginForm.parentNode.insertBefore(alertDiv, loginForm);
+    }
   }
 
   // Handle signup form submission
