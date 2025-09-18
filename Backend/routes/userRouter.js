@@ -4,9 +4,9 @@ const { UserModel } = require("../models/userModel");
 const { TokenModel } = require("../models/tokenModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { sendEmail } = require("../utils/sendmail");
 const userRouter = express.Router();
 
-// ....User Registration part start.... //
 userRouter.post("/register", async (req, res) => {
   const { name, email, password, phone, role, farmInfo } = req.body;
 
@@ -23,6 +23,8 @@ userRouter.post("/register", async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      otp,
+      otpExpiry,
       phone,
       role,
       farmInfo,
@@ -31,7 +33,7 @@ userRouter.post("/register", async (req, res) => {
     await newUser.save();
 
     return res.status(200).send({
-      message: "User registered successfully",
+      message: "User Registered Successfully",
       user: {
         userID: newUser._id,
         name: newUser.name,
@@ -44,8 +46,7 @@ userRouter.post("/register", async (req, res) => {
   }
 });
 
-// .....User Login part start..... //
-userRouter.post("/login", async (req, res) => {
+userRouter.post("/login-password", async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -77,7 +78,6 @@ userRouter.post("/login", async (req, res) => {
       { expiresIn: "30d" }
     );
 
-    // Save tokens in DB
     await TokenModel.findOneAndUpdate(
       { userId: user._id },
       { accessToken, refreshToken },
@@ -100,7 +100,79 @@ userRouter.post("/login", async (req, res) => {
   }
 });
 
-// User logout route
+userRouter.post("/login-otp", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(400).send({
+        error: "User not found, please register",
+        OK: false,
+      });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
+    user.otp = hashedOtp;
+    user.otpExpiry = Date.now() + 5 * 60 * 1000;
+    await user.save();
+
+    await sendEmail(email, "Your OTP Code", `Your OTP is: ${otp}`);
+
+    res.json({ message: "OTP sent to email" });
+  } catch (error) {
+    res.status(500).send({ message: "Internal error", error: error.message });
+  }
+});
+
+userRouter.post("/verify-otp", async (req, res) => {
+  const { email, otp } = req.body;
+
+  const user = await UserModel.findOne({ email });
+  if (!user) return res.status(400).json({ error: "User not found" });
+
+  if (Date.now() > user.otpExpiry)
+    return res.status(400).json({ error: "OTP expired" });
+
+  const isMatch = await bcrypt.compare(otp, user.otp);
+  if (!isMatch) return res.status(400).json({ error: "Invalid OTP" });
+
+  const accessToken = jwt.sign(
+    { userID: user._id, role: user.role, name: user.name },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  const refreshToken = jwt.sign(
+    { userID: user._id, role: user.role, name: user.name },
+    process.env.REFRESH_SECRETKEY,
+    { expiresIn: "30d" }
+  );
+
+  await TokenModel.findOneAndUpdate(
+    { userId: user._id },
+    { accessToken, refreshToken },
+    { upsert: true }
+  );
+
+  user.otp = undefined;
+  user.otpExpiry = undefined;
+
+  return res.status(200).send({
+    message: "Login successful",
+    token: accessToken,
+    refresh_token: refreshToken,
+    user: {
+      userID: user._id,
+      name: user.name,
+      role: user.role,
+    },
+    OK: true,
+  });
+});
+
 userRouter.post("/logout", async (req, res) => {
   try {
     const token = req.headers.authorization;

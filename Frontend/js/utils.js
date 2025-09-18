@@ -1,5 +1,5 @@
 // Utility Functions
-const API_BASE_URL = "http://localhost:6666/";
+const API_BASE_URL = "https://agrigo-backend.onrender.com/";
 
 // Check if user is authenticated
 function checkAuth() {

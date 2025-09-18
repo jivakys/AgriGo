@@ -3,7 +3,7 @@
   // Global variables
   let isLoading = false; // Track loading state
   let currentProductId = null; // Store the current product ID globally
-  const BACKEND_URL = "http://localhost:3000";
+  const BACKEND_URL = "https://agrigo-backend.onrender.com";
 
   // Check if user is logged in and is a farmer
   const token = localStorage.getItem("token");
