@@ -23,8 +23,6 @@ userRouter.post("/register", async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      otp,
-      otpExpiry,
       phone,
       role,
       farmInfo,
@@ -176,7 +174,7 @@ userRouter.post("/verify-otp", async (req, res) => {
 userRouter.post("/logout", async (req, res) => {
   try {
     const token = req.headers.authorization;
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     await TokenModel.deleteOne({ userId: decoded.userID });
 

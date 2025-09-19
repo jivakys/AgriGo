@@ -68,14 +68,14 @@ document.addEventListener("DOMContentLoaded", function () {
         if (isPasswordLogin) {
           // Password login
           const password = document.getElementById("password").value;
-          
+
           if (!password) {
             alert("Please enter your password");
             return;
           }
 
           const response = await fetch(
-            "https://agrigo-backend.onrender.com/auth/user/login-password",
+            "http://localhost:3000/auth/user/login-password",
             {
               method: "POST",
               headers: {
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
           // OTP login
           const response = await fetch(
-            "https://agrigo-backend.onrender.com/auth/user/login-otp",
+            "http://localhost:3000/auth/user/login-otp",
             {
               method: "POST",
               headers: {
@@ -119,12 +119,17 @@ document.addEventListener("DOMContentLoaded", function () {
           if (response.ok) {
             // Store email for OTP verification page
             localStorage.setItem("otpEmail", email);
-            
-            showAlert("success", "OTP sent successfully! Redirecting to verification page...");
-            
+
+            showAlert(
+              "success",
+              "OTP sent successfully! Redirecting to verification page..."
+            );
+
             // Redirect to OTP verification page
             setTimeout(() => {
-              window.location.href = `otp-verification.html?email=${encodeURIComponent(email)}`;
+              window.location.href = `otp-verification.html?email=${encodeURIComponent(
+                email
+              )}`;
             }, 1500);
           } else {
             showAlert("danger", data.error || "Failed to send OTP");
@@ -139,13 +144,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // Show alert messages
     function showAlert(type, message) {
       // Remove existing alerts
-      const existingAlert = document.querySelector('.alert');
-      if (existingAlert && !existingAlert.classList.contains('alert-info')) {
+      const existingAlert = document.querySelector(".alert");
+      if (existingAlert && !existingAlert.classList.contains("alert-info")) {
         existingAlert.remove();
       }
 
       // Create new alert
-      const alertDiv = document.createElement('div');
+      const alertDiv = document.createElement("div");
       alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
       alertDiv.innerHTML = `
         ${message}
@@ -200,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Sending signup request with data:", formData);
 
         const response = await fetch(
-          "https://agrigo-backend.onrender.com/auth/user/register",
+          "http://localhost:3000/auth/user/register",
           {
             method: "POST",
             headers: {
