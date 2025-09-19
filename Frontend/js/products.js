@@ -92,6 +92,5 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  // Initialize product listing
   loadProducts();
 });

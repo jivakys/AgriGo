@@ -1,11 +1,9 @@
 // Farmer Dashboard JavaScript
 (function () {
-  // Global variables
-  let isLoading = false; // Track loading state
-  let currentProductId = null; // Store the current product ID globally
-  const BACKEND_URL = "https://agrigo-backend.onrender.com";
+  let isLoading = false;
+  let currentProductId = null;
+  const BACKEND_URL = "http://localhost:3000";
 
-  // Check if user is logged in and is a farmer
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -14,10 +12,8 @@
     return;
   }
 
-  // Display farmer name
   document.getElementById("farmerName").textContent = user.name;
 
-  // Navigation handlers
   document
     .getElementById("dashboardLink")
     .addEventListener("click", showDashboard);
@@ -48,7 +44,6 @@
 
   async function checkBackendConnection() {
     try {
-      // Try to fetch products as a health check
       const response = await fetch(`${BACKEND_URL}/products/farmer/products`, {
         method: "GET",
         headers: {
@@ -151,7 +146,6 @@
 
       const data = await response.json();
 
-      // Update dashboard metrics
       document.getElementById("totalProducts").textContent =
         data.totalProducts || 0;
       document.getElementById("pendingOrders").textContent =
@@ -160,7 +154,6 @@
         data.totalRevenue || 0
       }`;
 
-      // Update recent orders table
       const recentOrdersTable = document
         .getElementById("recentOrdersTable")
         .getElementsByTagName("tbody")[0];
