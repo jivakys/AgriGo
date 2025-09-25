@@ -118,7 +118,7 @@ userRouter.post("/login-otp", async (req, res) => {
     user.otpExpiry = Date.now() + 5 * 60 * 1000;
     await user.save();
 
-    await sendEmail(email, "Your OTP Code", `Your OTP is: ${otp}`);
+    await sendEmail(user.email, "Your AgriGo Login OTP", otp, "login");
 
     res.json({ message: "OTP sent to email" });
   } catch (error) {
@@ -198,22 +198,17 @@ userRouter.post("/forget-password", async (req, res) => {
     });
   }
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const hashedOtp = await bcrypt.hash(otp, process.env.SALT);
+  const hashedOtp = await bcrypt.hash(otp, 10);
 
   user.resetOtp = hashedOtp;
   user.resetOtpExpiry = Date.now() + 10 * 60 * 1000;
   await user.save();
 
-  // Send OTP via email
   await sendEmail(
     user.email,
-    "Password Reset OTP",
-    `
-      <h3>Password Reset Request</h3>
-      <p>Use the following OTP to reset your password:</p>
-      <div style="font-size:22px; font-weight:bold; color:#4CAF50;">${otp}</div>
-      <p>This OTP will expire in 10 minutes.</p>
-    `
+    "AgriGo Password Reset OTP",
+    otp,
+    "forgotPassword"
   );
 
   res.json({ message: "OTP sent to email" });
@@ -239,10 +234,8 @@ userRouter.post("/reset-password", async (req, res) => {
     return res.status(400).json({ error: "Invalid OTP" });
   }
 
-  // Update password
   user.password = await bcrypt.hash(newPassword, 10);
 
-  // Clear OTP fields
   user.resetOtp = undefined;
   user.resetOtpExpiry = undefined;
   await user.save();
