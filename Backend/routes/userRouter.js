@@ -2,6 +2,7 @@ const express = require("express");
 require("dotenv").config();
 const { UserModel } = require("../models/userModel");
 const { TokenModel } = require("../models/tokenModel");
+const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { sendEmail } = require("../utils/sendmail");
@@ -185,6 +186,68 @@ userRouter.post("/logout", async (req, res) => {
       error: error.message,
     });
   }
+});
+
+userRouter.post("/forget-password", async (req, res) => {
+  const { email } = req.body;
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    return res.status(400).send({
+      error: "User not found, please register",
+      OK: false,
+    });
+  }
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const hashedOtp = await bcrypt.hash(otp, process.env.SALT);
+
+  user.resetOtp = hashedOtp;
+  user.resetOtpExpiry = Date.now() + 10 * 60 * 1000;
+  await user.save();
+
+  // Send OTP via email
+  await sendEmail(
+    user.email,
+    "Password Reset OTP",
+    `
+      <h3>Password Reset Request</h3>
+      <p>Use the following OTP to reset your password:</p>
+      <div style="font-size:22px; font-weight:bold; color:#4CAF50;">${otp}</div>
+      <p>This OTP will expire in 10 minutes.</p>
+    `
+  );
+
+  res.json({ message: "OTP sent to email" });
+});
+
+userRouter.post("/reset-password", async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    return res.status(400).send({
+      error: "User not found, please register",
+      OK: false,
+    });
+  }
+
+  if (Date.now() > user.resetOtpExpiry) {
+    return res.status(400).json({ error: "OTP expired" });
+  }
+
+  const isMatch = await bcrypt.compare(otp, user.resetOtp);
+  if (!isMatch) {
+    return res.status(400).json({ error: "Invalid OTP" });
+  }
+
+  // Update password
+  user.password = await bcrypt.hash(newPassword, 10);
+
+  // Clear OTP fields
+  user.resetOtp = undefined;
+  user.resetOtpExpiry = undefined;
+  await user.save();
+
+  res.json({ message: "Password reset successful" });
 });
 
 module.exports = { userRouter };
