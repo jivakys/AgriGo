@@ -8,13 +8,14 @@ const { orderRouter } = require("./routes/orderRouter");
 const app = express();
 
 // Enable CORS first
-app.use(
-  cors({
-    origin: "http://127.0.0.1:5500",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: "http://127.0.0.1:5500",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   })
+// );
+app.use(cors());
 
 app.use(express.json());
 
