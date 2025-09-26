@@ -243,4 +243,36 @@ userRouter.post("/reset-password", async (req, res) => {
   res.json({ message: "Password reset successful" });
 });
 
+// Verify reset OTP without changing password
+userRouter.post("/verify-reset-otp", async (req, res) => {
+  const { email, otp } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(400).send({
+        error: "User not found, please register",
+        OK: false,
+      });
+    }
+
+    if (!user.resetOtp || !user.resetOtpExpiry) {
+      return res.status(400).json({ error: "No active OTP. Please request again." });
+    }
+
+    if (Date.now() > user.resetOtpExpiry) {
+      return res.status(400).json({ error: "OTP expired" });
+    }
+
+    const isMatch = await bcrypt.compare(otp, user.resetOtp);
+    if (!isMatch) {
+      return res.status(400).json({ error: "Invalid OTP" });
+    }
+
+    return res.status(200).json({ message: "OTP verified", OK: true });
+  } catch (error) {
+    return res.status(500).json({ error: "Internal error", message: error.message });
+  }
+});
+
 module.exports = { userRouter };

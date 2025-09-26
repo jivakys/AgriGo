@@ -69,16 +69,15 @@ body {
 }
 
 /* OTP Input Styling */
-#otp {
-    font-size: 1.5rem;
-    font-weight: bold;
-    letter-spacing: 0.5rem;
-    text-align: center;
+.otp-inputs .otp-input {
+    max-width: 48px;
+    height: 56px;
+    font-size: 1.25rem;
+    font-weight: 600;
     border: 2px solid #dee2e6;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-#otp:focus {
+.otp-inputs .otp-input:focus {
     border-color: #28a745;
     box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
