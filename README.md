@@ -18,8 +18,6 @@ AgriGo is a web-based platform that connects farmers directly with consumers, pr
 
   - Browse products
   - Place orders
-  - Track deliveries
-  - View order history
 
 - **Product Management**
   - Add new products
@@ -133,8 +131,8 @@ Alternatively, use a dedicated SMTP provider:
    ```
 
 5. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:3000
+   - Frontend: [https://agrigo-frontend.vercel.app/](https://agrigo-frontend.vercel.app/)
+   - Backend API: [https://agrigo-backend.onrender.com](https://agrigo-backend.onrender.com)
 
 ## API Endpoints
 
