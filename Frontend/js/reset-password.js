@@ -2,11 +2,17 @@
 document.addEventListener("DOMContentLoaded", function () {
   const resetPasswordForm = document.getElementById("resetPasswordForm");
   const emailInput = document.getElementById("email");
-  const otpInput = document.getElementById("otp");
   const newPasswordInput = document.getElementById("newPassword");
   const confirmPasswordInput = document.getElementById("confirmPassword");
   const toggleNewPasswordBtn = document.getElementById("toggleNewPassword");
   const toggleConfirmPasswordBtn = document.getElementById("toggleConfirmPassword");
+  const otpSection = document.getElementById("otpSection");
+  const passwordSection = document.getElementById("passwordSection");
+  const otpInputs = Array.from(document.querySelectorAll(".otp-input"));
+  const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+  const resendOtpBtn = document.getElementById("resendOtpBtn");
+  const countdownSpan = document.getElementById("countdown");
+  const timerText = document.getElementById("timerText");
 
   // Get email from URL parameters or localStorage
   const urlParams = new URLSearchParams(window.location.search);
@@ -21,12 +27,104 @@ document.addEventListener("DOMContentLoaded", function () {
   // Display email
   emailInput.value = email;
 
-  // Auto-focus on OTP input
-  otpInput.focus();
+  // OTP inputs behavior
+  if (otpInputs.length) {
+    otpInputs[0].focus();
+  }
+  otpInputs.forEach((input, index) => {
+    input.addEventListener('input', function() {
+      this.value = this.value.replace(/[^0-9]/g, '');
+      if (this.value && index < otpInputs.length - 1) {
+        otpInputs[index + 1].focus();
+      }
+    });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && !this.value && index > 0) {
+        otpInputs[index - 1].focus();
+      }
+    });
+  });
 
-  // Handle OTP input - only allow numbers
-  otpInput.addEventListener('input', function(e) {
-    this.value = this.value.replace(/[^0-9]/g, '');
+  // Countdown + resend
+  let timeLeft = 60;
+  let timerId;
+  function startCountdown() {
+    clearInterval(timerId);
+    timeLeft = 60;
+    resendOtpBtn.disabled = true;
+    timerText.innerHTML = 'Resend code in <span id="countdown">' + timeLeft + '</span> sec';
+    timerId = setInterval(() => {
+      timeLeft--;
+      const span = document.getElementById('countdown');
+      if (span) span.textContent = String(Math.max(timeLeft, 0));
+      if (timeLeft <= 0) {
+        clearInterval(timerId);
+        resendOtpBtn.disabled = false;
+        timerText.textContent = 'You can now resend code';
+      }
+    }, 1000);
+  }
+  startCountdown();
+
+  resendOtpBtn.addEventListener('click', async function() {
+    try {
+      resendOtpBtn.disabled = true;
+      const res = await fetch('http://localhost:3000/auth/user/forget-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showAlert('success', 'OTP resent to your email');
+        otpInputs.forEach(i => i.value = '');
+        if (otpInputs.length) otpInputs[0].focus();
+        startCountdown();
+      } else {
+        showAlert('danger', data.error || 'Failed to resend OTP');
+        resendOtpBtn.disabled = false;
+      }
+    } catch (err) {
+      showAlert('danger', 'Network error while resending OTP');
+      resendOtpBtn.disabled = false;
+    }
+  });
+
+  function getOtpValue() {
+    return otpInputs.map(i => i.value).join('');
+  }
+
+  verifyOtpBtn.addEventListener('click', async function() {
+    const otp = getOtpValue();
+    if (otp.length !== 6) {
+      showAlert('warning', 'Enter the 6-digit code');
+      return;
+    }
+    try {
+      verifyOtpBtn.disabled = true;
+      verifyOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verifying...';
+      const response = await fetch('http://localhost:3000/auth/user/verify-reset-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        showAlert('success', 'Code verified. Create your new password.');
+        otpSection.classList.add('d-none');
+        passwordSection.classList.remove('d-none');
+        newPasswordInput.focus();
+      } else {
+        showAlert('danger', data.error || 'Invalid code');
+        otpInputs.forEach(i => i.value = '');
+        if (otpInputs.length) otpInputs[0].focus();
+      }
+    } catch (err) {
+      showAlert('danger', 'Verification failed. Try again.');
+    } finally {
+      verifyOtpBtn.disabled = false;
+      verifyOtpBtn.innerHTML = '<i class="fas fa-check me-2"></i>Verify Code';
+    }
   });
 
   // Toggle password visibility for new password
@@ -46,15 +144,13 @@ document.addEventListener("DOMContentLoaded", function () {
   // Handle form submission
   resetPasswordForm.addEventListener("submit", async function (e) {
     e.preventDefault();
-
-    const otp = otpInput.value.trim();
+    const otp = getOtpValue();
     const newPassword = newPasswordInput.value.trim();
     const confirmPassword = confirmPasswordInput.value.trim();
 
     // Validation
     if (otp.length !== 6) {
-      showAlert('warning', 'Please enter a valid 6-digit verification code');
-      otpInput.focus();
+      showAlert('warning', 'Please verify your code first');
       return;
     }
 
@@ -75,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const submitBtn = resetPasswordForm.querySelector('button[type="submit"]');
       const originalText = submitBtn.innerHTML;
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Resetting...';
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
 
       const response = await fetch(
         "http://localhost:3000/auth/user/reset-password",
@@ -106,11 +202,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 2000);
       } else {
         showAlert('danger', data.error || 'Failed to reset password. Please try again.');
-        
-        // Clear OTP input on error
-        if (data.error && data.error.includes('Invalid') || data.error.includes('expired')) {
-          otpInput.value = '';
-          otpInput.focus();
+        if (data.error && (data.error.includes('Invalid') || data.error.includes('expired'))) {
+          passwordSection.classList.add('d-none');
+          otpSection.classList.remove('d-none');
+          otpInputs.forEach(i => i.value = '');
+          if (otpInputs.length) otpInputs[0].focus();
         }
       }
     } catch (error) {
@@ -120,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Re-enable form
       const submitBtn = resetPasswordForm.querySelector('button[type="submit"]');
       submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Reset Password';
+      submitBtn.innerHTML = '<i class=\"fas fa-check me-2\"></i>Create new password';
     }
   });
 
