@@ -36,7 +36,7 @@ const orderSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "delivered", "cancelled"],
+      enum: ["pending", "confirmed", "out_for_delivery", "delivered", "cancelled"],
       default: "pending",
     },
     deliveryAddress: {
@@ -48,6 +48,15 @@ const orderSchema = mongoose.Schema(
       type: String,
       enum: ["cash", "card", "upi"],
       required: true,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "refunded"],
+      default: "pending",
+    },
+    deliverySlot: {
+      date: { type: Date },
+      window: { type: String },
     },
     createdAt: {
       type: Date,
