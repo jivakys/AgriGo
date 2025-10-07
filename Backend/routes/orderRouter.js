@@ -2,14 +2,18 @@ const express = require("express");
 const { OrderModel } = require("../models/orderModel");
 const { ProductModel } = require("../models/productModel");
 const { farmerAuth } = require("../middlewares/farmerAuth");
+const { authenticate } = require("../middlewares/authenticate");
 
 const orderRouter = express.Router();
 
-// Create a new order (consumer)
+const userIdToCart = new Map();
+
+orderRouter.use(authenticate);
+
 orderRouter.post("/", async (req, res) => {
   try {
     const { products, deliveryAddress, paymentMethod } = req.body;
-    const consumerId = req.user._id;
+    const consumerId = req.user.userID || req.user._id;
 
     // Validate products and calculate total amount
     let totalAmount = 0;
@@ -56,8 +60,9 @@ orderRouter.post("/", async (req, res) => {
       totalAmount,
       deliveryAddress,
       paymentMethod,
+      deliverySlot: req.body.deliverySlot || null,
       status: "pending",
-      paymentStatus: "pending",
+      paymentMethod,
     });
 
     await order.save();
@@ -75,6 +80,62 @@ orderRouter.post("/", async (req, res) => {
       .status(500)
       .json({ message: "Error creating order", error: error.message });
   }
+});
+
+// ----- CART ENDPOINTS (demo-grade) -----
+orderRouter.get("/cart", async (req, res) => {
+  const userId = req.user.userID || req.user._id;
+  const cart = userIdToCart.get(String(userId)) || { items: [] };
+  // populate product details
+  const populated = [];
+  for (const it of cart.items) {
+    const product = await ProductModel.findById(it.productId);
+    if (product) populated.push({ product, quantity: it.quantity });
+  }
+  return res.json({ items: populated });
+});
+
+orderRouter.post("/cart", async (req, res) => {
+  const userId = req.user.userID || req.user._id;
+  const { productId, quantity } = req.body;
+  if (!productId || !quantity)
+    return res.status(400).json({ message: "productId and quantity required" });
+  const cart = userIdToCart.get(String(userId)) || { items: [] };
+  const existing = cart.items.find(
+    (i) => String(i.productId) === String(productId)
+  );
+  if (existing) existing.quantity += quantity;
+  else cart.items.push({ productId, quantity });
+  userIdToCart.set(String(userId), cart);
+  return res.status(201).json({ message: "Added to cart" });
+});
+
+orderRouter.put("/cart", async (req, res) => {
+  const userId = req.user.userID || req.user._id;
+  const { productId, delta } = req.body;
+  const cart = userIdToCart.get(String(userId)) || { items: [] };
+  const item = cart.items.find(
+    (i) => String(i.productId) === String(productId)
+  );
+  if (!item) return res.status(404).json({ message: "Item not in cart" });
+  item.quantity += delta;
+  if (item.quantity <= 0)
+    cart.items = cart.items.filter(
+      (i) => String(i.productId) !== String(productId)
+    );
+  userIdToCart.set(String(userId), cart);
+  return res.json({ message: "Updated" });
+});
+
+orderRouter.delete("/cart/:productId", async (req, res) => {
+  const userId = req.user.userID || req.user._id;
+  const productId = req.params.productId;
+  const cart = userIdToCart.get(String(userId)) || { items: [] };
+  cart.items = cart.items.filter(
+    (i) => String(i.productId) !== String(productId)
+  );
+  userIdToCart.set(String(userId), cart);
+  return res.json({ message: "Removed" });
 });
 
 // Get all orders for a consumer
