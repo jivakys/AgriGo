@@ -461,7 +461,6 @@
         document.getElementById("productModal")
       );
       if (modal) {
-        // Restore aria-hidden and remove inert before hiding
         const modalElement = document.getElementById("productModal");
         modalElement.setAttribute("aria-hidden", "true");
         modalElement.removeAttribute("inert");
@@ -473,7 +472,6 @@
       document.getElementById("productForm").reset();
       currentProductId = null;
 
-      // Reload products
       await loadProducts();
       alert("Product saved successfully");
     } catch (error) {
