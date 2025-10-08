@@ -12,8 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Load orders based on user role
   async function loadOrders() {
     try {
-      const endpoint =
-        user.role === "farmer" ? "/orders/farmer" : "/orders/consumer";
+      const endpoint = user.role === "farmer" ? "/orders/farmer" : "/orders/consumer";
       const response = await fetch(endpoint, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -89,18 +88,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${order.items
+                                    ${order.products
                                       .map(
                                         (item) => `
                                         <tr>
-                                            <td>${item.product.name}</td>
-                                            <td>${item.quantity} ${
-                                          item.product.unit
-                                        }</td>
-                                            <td>₹${item.product.price}</td>
-                                            <td>₹${
-                                              item.quantity * item.product.price
-                                            }</td>
+                                            <td>${item.productId.name}</td>
+                                            <td>${item.quantity} ${item.productId.unit}</td>
+                                            <td>₹${item.price}</td>
+                                            <td>₹${item.quantity * item.price}</td>
                                         </tr>
                                     `
                                       )
@@ -134,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
   window.updateOrderStatus = async function (orderId, status) {
     try {
       const response = await fetch(`/orders/${orderId}/status`, {
-        method: "PATCH",
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
