@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Redirect based on role
         setTimeout(() => {
           if (data.user.role === "farmer") {
-            window.location.href = "farmer-dashboard.html";
+            window.location.href = "seller-info.html";
           } else {
             window.location.href = "products.html";
           }
