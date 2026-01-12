@@ -10,11 +10,18 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  // Show Add Product button only for farmers
+  // Show Add Product button only for farmers, hide Cart for them
   const addProductBtn = document.getElementById("addProductBtn");
-  if (addProductBtn && user && user.role === "farmer") {
-    addProductBtn.style.display = "inline-block";
-    addProductBtn.addEventListener("click", showAddProductModal);
+  const topCartBtn = document.getElementById("topCartBtn");
+
+  if (user && user.role === "farmer") {
+    if (addProductBtn) {
+      addProductBtn.style.display = "inline-block";
+      addProductBtn.addEventListener("click", showAddProductModal);
+    }
+    if (topCartBtn) {
+      topCartBtn.style.display = "none";
+    }
   }
 
   let allProducts = [];
@@ -100,7 +107,9 @@ document.addEventListener("DOMContentLoaded", function () {
         (product) => `
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
-                    <img src="${product.imageUrl || "https://placehold.co/600x400?text=No+Image"
+                    <img src="${(product.images && product.images[0]) ||
+          product.imageUrl ||
+          "https://placehold.co/600x400?text=No+Image"
           }" class="card-img-top" alt="${product.name}">
                     <div class="card-body">
                         <h5 class="card-title">${product.name}</h5>
@@ -169,12 +178,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const name = document.getElementById("productName").value.trim();
-    const description = document.getElementById("productDescription").value.trim();
+    const description = document
+      .getElementById("productDescription")
+      .value.trim();
     const price = parseFloat(document.getElementById("productPrice").value);
     const quantity = parseInt(document.getElementById("productQuantity").value);
     const unit = document.getElementById("productUnit").value;
     const category = document.getElementById("productCategory").value;
-    const imageFile = document.getElementById("productImage").files[0];
+    const imageUrl = document.getElementById("productImage").value.trim();
 
     // Validate required fields
     if (!name || !description || !category || !unit) {
@@ -200,14 +211,15 @@ document.addEventListener("DOMContentLoaded", function () {
       quantity,
       unit,
       category,
-      images: [], // For now, we'll handle images later if needed
+      images: imageUrl ? [imageUrl] : [],
     };
 
     try {
-      const submitBtn = document.querySelector('#addProductModal .btn-success');
+      const submitBtn = document.querySelector("#addProductModal .btn-success");
       const originalText = submitBtn.innerHTML;
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+      submitBtn.innerHTML =
+        '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
 
       const response = await fetch(`${BACKEND_URL}/products`, {
         method: "POST",
@@ -242,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Error adding product:", error);
       alert(error.message || "Failed to add product. Please try again.");
     } finally {
-      const submitBtn = document.querySelector('#addProductModal .btn-success');
+      const submitBtn = document.querySelector("#addProductModal .btn-success");
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.innerHTML = "Add Product";

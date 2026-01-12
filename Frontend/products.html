@@ -60,7 +60,7 @@
                 <button class="btn btn-success" id="addProductBtn" style="display: none;">
                     <i class="fas fa-plus"></i> Add New Product
                 </button>
-                <a class="btn btn-outline-primary ms-2" href="cart.html">
+                <a class="btn btn-outline-primary ms-2" href="cart.html" id="topCartBtn">
                     <i class="fas fa-shopping-cart"></i> Cart
                 </a>
             </div>
@@ -143,8 +143,9 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="productImage" class="form-label">Product Image</label>
-                            <input type="file" class="form-control" id="productImage" accept="image/*">
+                            <label for="productImage" class="form-label">Product Image URL</label>
+                            <input type="text" class="form-control" id="productImage"
+                                placeholder="https://example.com/image.jpg">
                         </div>
                     </form>
                 </div>
