@@ -1,0 +1,366 @@
+:root {
+  --agrigo-green: #28a745;
+  --agrigo-dark-green: #0b3b20;
+  --agrigo-darker-green: #042013;
+}
+
+body {
+  padding-top: 0;
+}
+
+/* Hero Section */
+.seller-hero {
+  background: radial-gradient(
+    circle at top left,
+    var(--agrigo-green) 0%,
+    var(--agrigo-dark-green) 45%,
+    var(--agrigo-darker-green) 100%
+  );
+  color: white;
+  padding: 6rem 0 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.seller-hero .breadcrumb {
+  background: transparent;
+  padding: 0;
+  margin-bottom: 2rem;
+}
+
+.seller-hero .breadcrumb-item a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+}
+
+.seller-hero .breadcrumb-item.active {
+  color: white;
+}
+
+.seller-hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+}
+
+.seller-hero .lead {
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.seller-hero .btn-hero {
+  border-radius: 8px;
+  padding: 0.75rem 1.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s;
+}
+
+.seller-hero .btn-primary-hero {
+  background-color: #2ecc71;
+  border: none;
+  color: white;
+}
+
+.seller-hero .btn-primary-hero:hover {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.seller-hero .btn-secondary-hero {
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.seller-hero .btn-secondary-hero:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+/* Feature Boxes Grid */
+.feature-boxes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.feature-box {
+  background: white;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.feature-box-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--agrigo-green);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-box-icon i {
+  color: white;
+  font-size: 1.5rem;
+}
+
+.feature-box-text {
+  color: var(--agrigo-dark-green);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Stat Cards */
+.stat-cards {
+  margin-top: 3rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.stat-card-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--agrigo-dark-green);
+  margin-bottom: 0.5rem;
+}
+
+.stat-card-label {
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Section Styles */
+.section-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--agrigo-dark-green);
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.section-content {
+  padding: 4rem 0;
+}
+
+.section-light {
+  background-color: #f8f9fa;
+}
+
+/* Feature Cards */
+.feature-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  height: 100%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.feature-card-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--agrigo-green);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.feature-card-icon i {
+  color: white;
+  font-size: 1.75rem;
+}
+
+.feature-card h5 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--agrigo-dark-green);
+  margin-bottom: 1rem;
+}
+
+.feature-card p {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Step Cards */
+.step-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  height: 100%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.step-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.step-number {
+  width: 56px;
+  height: 56px;
+  background: var(--agrigo-green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: white;
+}
+
+.step-content h5 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--agrigo-dark-green);
+  margin-bottom: 0.75rem;
+}
+
+.step-content p {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Testimonials */
+.testimonial-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  height: 100%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.testimonial-text {
+  font-style: italic;
+  color: #555;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.testimonial-author {
+  color: var(--agrigo-dark-green);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Benefits List */
+.benefits-section {
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+.benefits-section h5 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--agrigo-dark-green);
+  margin-bottom: 1.5rem;
+}
+
+.benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benefits-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+.benefits-list li i {
+  color: var(--agrigo-green);
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+}
+
+/* Action Buttons */
+.action-buttons {
+  margin-top: 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.action-btn {
+  border-radius: 8px;
+  padding: 0.875rem 1.75rem;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .seller-hero h1 {
+    font-size: 2rem;
+  }
+
+  .seller-hero .lead {
+    font-size: 1rem;
+  }
+
+  .feature-boxes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+  }
+}
