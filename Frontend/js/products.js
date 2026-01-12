@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", function () {
     addProductBtn.addEventListener("click", showAddProductModal);
   }
 
+  let allProducts = [];
+
   // Load products
   async function loadProducts() {
     try {
@@ -30,12 +32,62 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error("Failed to load products");
       }
 
-      const products = await response.json();
-      displayProducts(products);
+      allProducts = await response.json();
+      applyFilters(); // Display products with current filters (if any)
     } catch (error) {
       console.error("Error loading products:", error);
       alert("Failed to load products");
     }
+  }
+
+  // Filter and Sort Event Listeners
+  const searchInput = document.getElementById("searchInput");
+  const categoryFilter = document.getElementById("categoryFilter");
+  const sortFilter = document.getElementById("sortFilter");
+
+  if (searchInput) searchInput.addEventListener("input", applyFilters);
+  if (categoryFilter) categoryFilter.addEventListener("change", applyFilters);
+  if (sortFilter) sortFilter.addEventListener("change", applyFilters);
+
+  function applyFilters() {
+    let filtered = [...allProducts];
+
+    // Search
+    const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (p) =>
+          p.name.toLowerCase().includes(searchTerm) ||
+          p.description.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Category
+    const category = categoryFilter ? categoryFilter.value : "";
+    if (category) {
+      filtered = filtered.filter((p) => p.category === category);
+    }
+
+    // Sort
+    const sortValue = sortFilter ? sortFilter.value : "";
+    if (sortValue) {
+      filtered.sort((a, b) => {
+        switch (sortValue) {
+          case "price_asc":
+            return a.price - b.price;
+          case "price_desc":
+            return b.price - a.price;
+          case "name_asc":
+            return a.name.localeCompare(b.name);
+          case "name_desc":
+            return b.name.localeCompare(a.name);
+          default:
+            return 0;
+        }
+      });
+    }
+
+    displayProducts(filtered);
   }
 
   // Display products in the UI
@@ -48,27 +100,23 @@ document.addEventListener("DOMContentLoaded", function () {
         (product) => `
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
-                    <img src="${
-                      product.imageUrl || "images/default-product.jpg"
-                    }" class="card-img-top" alt="${product.name}">
+                    <img src="${product.imageUrl || "https://placehold.co/600x400?text=No+Image"
+          }" class="card-img-top" alt="${product.name}">
                     <div class="card-body">
                         <h5 class="card-title">${product.name}</h5>
                         <p class="card-text">${product.description}</p>
-                        <p class="card-text"><strong>Price:</strong> ₹${
-                          product.price
-                        }</p>
-                        <p class="card-text"><small class="text-muted">Available: ${
-                          product.quantity
-                        } ${product.unit}</small></p>
-                        ${
-                          user.role === "consumer"
-                            ? `
+                        <p class="card-text"><strong>Price:</strong> ₹${product.price
+          }</p>
+                        <p class="card-text"><small class="text-muted">Available: ${product.quantity
+          } ${product.unit}</small></p>
+                        ${user.role === "consumer"
+            ? `
                             <button class="btn btn-primary" onclick="addToCart('${product._id}')">
                                 Add to Cart
                             </button>
                         `
-                            : ""
-                        }
+            : ""
+          }
                     </div>
                 </div>
             </div>
