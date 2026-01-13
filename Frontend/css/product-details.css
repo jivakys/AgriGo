@@ -1,0 +1,92 @@
+/* Product Details Page Styles */
+.product-detail-image-container {
+  background-color: #d1e7dd;
+  /* Soft green background */
+  border-radius: 20px;
+  padding: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70%;
+  min-height: 500px;
+}
+
+.product-detail-image {
+  max-height: 310px;
+  width: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.15));
+  transform: rotate(-5deg);
+  transition: transform 0.3s;
+}
+
+.product-detail-image:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.product-highlights-box {
+  background-color: #e8f5e9;
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+.highlight-item i {
+  color: #2ecc71;
+  margin-right: 10px;
+  font-size: 0.8rem;
+}
+
+.quantity-selector {
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 150px;
+}
+
+.btn-gpay {
+  background-color: #000;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.btn-gpay:hover {
+  background-color: #333;
+  color: white;
+}
+
+.related-accordion .accordion-button:not(.collapsed) {
+  background-color: #f8f9fa;
+  color: #212529;
+  box-shadow: none;
+}
+
+.related-accordion .accordion-button:focus {
+  box-shadow: none;
+  border-color: rgba(0, 0, 0, 0.125);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .product-detail-image-container {
+    min-height: 300px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+}
