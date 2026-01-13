@@ -150,9 +150,8 @@
         data.totalProducts || 0;
       document.getElementById("pendingOrders").textContent =
         data.pendingOrders || 0;
-      document.getElementById("totalRevenue").textContent = `₹${
-        data.totalRevenue || 0
-      }`;
+      document.getElementById("totalRevenue").textContent = `₹${data.totalRevenue || 0
+        }`;
 
       const recentOrdersTable = document
         .getElementById("recentOrdersTable")
@@ -167,15 +166,13 @@
                         <td>${order.consumerId?.name || "N/A"}</td>
                         <td>₹${order.totalAmount || 0}</td>
                         <td>${order.status || "N/A"}</td>
-                        <td>${
-                          order.createdAt
-                            ? new Date(order.createdAt).toLocaleDateString()
-                            : "N/A"
-                        }</td>
+                        <td>${order.createdAt
+              ? new Date(order.createdAt).toLocaleDateString()
+              : "N/A"
+            }</td>
                         <td>
-                            <button class="btn btn-sm btn-primary" onclick="viewOrder('${
-                              order._id
-                            }')">View</button>
+                            <button class="btn btn-sm btn-primary" onclick="viewOrder('${order._id
+            }')">View</button>
                         </td>
                     `;
         });
@@ -245,16 +242,13 @@
                     <td>${product.category || "N/A"}</td>
                     <td>₹${product.price || 0}</td>
                     <td>${product.quantity || 0} ${product.unit || ""}</td>
-                    <td>${
-                      product.isAvailable ? "Available" : "Not Available"
-                    }</td>
+                    <td>${product.isAvailable ? "Available" : "Not Available"
+          }</td>
                     <td>
-                        <button class="btn btn-sm btn-primary" onclick="editProduct('${
-                          product._id
-                        }')">Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteProduct('${
-                          product._id
-                        }')">Delete</button>
+                        <button class="btn btn-sm btn-primary" onclick="editProduct('${product._id
+          }')">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteProduct('${product._id
+          }')">Delete</button>
                     </td>
                 `;
       });
@@ -315,12 +309,10 @@
                     <td>${order.status}</td>
                     <td>${new Date(order.createdAt).toLocaleDateString()}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary" onclick="viewOrder('${
-                          order._id
-                        }')">View</button>
-                        <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${
-                          order._id
-                        }', 'completed')">Complete</button>
+                        <button class="btn btn-sm btn-primary" onclick="viewOrder('${order._id
+          }')">View</button>
+                        <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order._id
+          }', 'completed')">Complete</button>
                     </td>
                 `;
       });
@@ -361,6 +353,11 @@
     document.getElementById("productQuantity").value = product.quantity;
     document.getElementById("productUnit").value = product.unit;
     document.getElementById("productDescription").value = product.description;
+
+    // Handle image
+    const imageUrl = (product.images && product.images[0]) || product.imageUrl || '';
+    document.getElementById("productImage").value = imageUrl;
+
     document.getElementById("productAvailable").checked = product.isAvailable;
 
     currentProductId = product._id;
@@ -391,6 +388,7 @@
     const description = document
       .getElementById("productDescription")
       .value.trim();
+    const imageUrl = document.getElementById("productImage").value.trim();
     const isAvailable = document.getElementById("productAvailable").checked;
 
     // Validate required fields
@@ -432,6 +430,7 @@
       quantity,
       unit,
       description,
+      images: imageUrl ? [imageUrl] : [],
       isAvailable,
     };
 
