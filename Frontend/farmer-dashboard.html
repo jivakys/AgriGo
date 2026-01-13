@@ -7,30 +7,141 @@
     <title>Farmer Dashboard - AgriGo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            --secondary-gradient: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            --accent-gradient: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background-color: #f4f6f9;
+        }
+
+        .navbar {
+            background: var(--primary-gradient) !important;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .dashboard-card {
+            border: none;
+            border-radius: 15px;
+            color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .card-products {
+            background: var(--secondary-gradient);
+        }
+
+        .card-orders {
+            background: var(--accent-gradient);
+        }
+
+        .card-revenue {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        }
+
+        .dashboard-card .card-body {
+            padding: 1.5rem;
+        }
+
+        .dashboard-card h5 {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .dashboard-card .card-text {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        .dashboard-card i {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            font-size: 4rem;
+            opacity: 0.2;
+        }
+
+        .table-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .table-card .card-header {
+            background-color: white;
+            border-bottom: 1px solid #eee;
+            padding: 1.5rem;
+        }
+
+        .table th {
+            border-top: none;
+            color: #7f8c8d;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .btn-action {
+            width: 35px;
+            height: 35px;
+            padding: 0;
+            line-height: 35px;
+            text-align: center;
+            border-radius: 50%;
+            margin: 0 2px;
+            transition: all 0.3s;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.1);
+        }
+    </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
         <div class="container">
-            <a class="navbar-brand" href="#">AgriGo</a>
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-leaf me-2"></i>AgriGo Farmer
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#" id="dashboardLink">Dashboard</a>
+                        <a class="nav-link active" href="#" id="dashboardLink"><i class="fas fa-chart-line me-1"></i>
+                            Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" id="productsLink">My Products</a>
+                        <a class="nav-link" href="#" id="productsLink"><i class="fas fa-box me-1"></i> My Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" id="ordersLink">Orders</a>
+                        <a class="nav-link" href="#" id="ordersLink"><i class="fas fa-shopping-bag me-1"></i> Orders</a>
                     </li>
                 </ul>
-                <div class="d-flex">
-                    <span class="navbar-text me-3" id="farmerName"></span>
-                    <button class="btn btn-outline-light" id="logoutBtn">Logout</button>
+                <div class="d-flex align-items-center">
+                    <div class="text-white me-3">
+                        <i class="fas fa-user-circle me-1"></i>
+                        <span id="farmerName">Farmer</span>
+                    </div>
+                    <button class="btn btn-light btn-sm rounded-pill px-3" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </button>
                 </div>
             </div>
         </div>
@@ -40,27 +151,30 @@
         <!-- Dashboard Content -->
         <div id="dashboardContent">
             <div class="row">
-                <div class="col-md-4">
-                    <div class="card">
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card card-products">
                         <div class="card-body">
                             <h5 class="card-title">Total Products</h5>
                             <p class="card-text" id="totalProducts">0</p>
+                            <i class="fas fa-box-open"></i>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card">
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card card-orders">
                         <div class="card-body">
                             <h5 class="card-title">Pending Orders</h5>
                             <p class="card-text" id="pendingOrders">0</p>
+                            <i class="fas fa-shopping-cart"></i>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card">
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card card-revenue">
                         <div class="card-body">
                             <h5 class="card-title">Total Revenue</h5>
                             <p class="card-text" id="totalRevenue">₹0</p>
+                            <i class="fas fa-rupee-sign"></i>
                         </div>
                     </div>
                 </div>
@@ -68,16 +182,18 @@
 
             <div class="row mt-4">
                 <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">Recent Orders</h5>
+                    <div class="card table-card">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="mb-0 fw-bold text-secondary">
+                                <i class="fas fa-clock me-2"></i>Recent Orders
+                            </h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table" id="recentOrdersTable">
-                                    <thead>
+                                <table class="table table-hover mb-0" id="recentOrdersTable">
+                                    <thead class="bg-light">
                                         <tr>
-                                            <th>Order ID</th>
+                                            <th class="ps-4">Order ID</th>
                                             <th>Customer</th>
                                             <th>Amount</th>
                                             <th>Status</th>
@@ -85,7 +201,7 @@
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="align-middle">
                                         <!-- Orders will be populated here -->
                                     </tbody>
                                 </table>
@@ -99,48 +215,58 @@
         <!-- Products Content -->
         <div id="productsContent" style="display: none;">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>My Products</h2>
-                <button class="btn btn-success" id="addProductBtn">Add New Product</button>
+                <h2 class="text-secondary fw-bold"><i class="fas fa-box me-2"></i>My Products</h2>
+                <button class="btn btn-success shadow-sm rounded-pill px-4" id="addProductBtn">
+                    <i class="fas fa-plus me-2"></i>Add New Product
+                </button>
             </div>
-            <div class="table-responsive">
-                <table class="table" id="productsTable">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Products will be populated here -->
-                    </tbody>
-                </table>
+            <div class="card table-card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="productsTable">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="align-middle">
+                                <!-- Products will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Orders Content -->
         <div id="ordersContent" style="display: none;">
-            <h2 class="mb-4">All Orders</h2>
-            <div class="table-responsive">
-                <table class="table" id="ordersTable">
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Products</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Orders will be populated here -->
-                    </tbody>
-                </table>
+            <h2 class="mb-4 text-secondary fw-bold"><i class="fas fa-shopping-bag me-2"></i>All Orders</h2>
+            <div class="card table-card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="ordersTable">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Products</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="align-middle">
+                                <!-- Orders will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -190,6 +316,11 @@
                         <div class="mb-3">
                             <label for="productDescription" class="form-label">Description</label>
                             <textarea class="form-control" id="productDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productImage" class="form-label">Product Image URL</label>
+                            <input type="text" class="form-control" id="productImage"
+                                placeholder="https://example.com/image.jpg">
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="productAvailable" checked>
