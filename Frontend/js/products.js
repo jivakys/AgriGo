@@ -97,7 +97,6 @@ document.addEventListener("DOMContentLoaded", function () {
     displayProducts(filtered);
   }
 
-  // Display products in the UI
   function displayProducts(products) {
     const productsContainer = document.getElementById("productsContainer");
     if (!productsContainer) return;
@@ -106,26 +105,40 @@ document.addEventListener("DOMContentLoaded", function () {
       .map(
         (product) => `
             <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <img src="${(product.images && product.images[0]) ||
+                <div class="card h-100 product-card shadow-sm border-0 rounded-4 overflow-hidden">
+                    <div class="position-relative">
+                        <img src="${(product.images && product.images[0]) ||
           product.imageUrl ||
           "https://placehold.co/600x400?text=No+Image"
-          }" class="card-img-top" alt="${product.name}">
-                    <div class="card-body">
-                        <h5 class="card-title">${product.name}</h5>
-                        <p class="card-text">${product.description}</p>
-                        <p class="card-text"><strong>Price:</strong> ₹${product.price
-          }</p>
-                        <p class="card-text"><small class="text-muted">Available: ${product.quantity
-          } ${product.unit}</small></p>
-                        ${user.role === "consumer"
+          }" class="card-img-top" alt="${product.name}" style="height: 250px; object-fit: cover;">
+                        ${product.quantity === 0 ? '<span class="position-absolute top-0 end-0 badge bg-danger m-3">Out of Stock</span>' : ''}
+                    </div>
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h5 class="card-title fw-bold mb-1 fs-4">${product.name}</h5>
+                                <p class="text-muted small mb-0"><i class="fas fa-store me-1"></i>${product.farmerName || "AgriGo Farmer"}</p>
+                            </div>
+                            <h4 class="text-success fw-bold mb-0">₹${product.price}</h4>
+                        </div>
+                        
+                        <p class="card-text text-secondary mb-4 flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            ${product.description}
+                        </p>
+                        
+                        <div class="mt-auto d-grid gap-2">
+                             <a href="product-details.html?id=${product._id}" class="btn btn-outline-secondary rounded-pill">
+                                Show Details
+                            </a>
+                            ${user.role === "consumer" && product.quantity > 0
             ? `
-                            <button class="btn btn-primary" onclick="addToCart('${product._id}')">
-                                Add to Cart
-                            </button>
-                        `
+                                <button class="btn btn-order-now text-white fw-bold rounded-pill py-2" onclick="addToCart('${product._id}')">
+                                    <i class="fas fa-shopping-bag me-2"></i>Order Now
+                                </button>
+                            `
             : ""
           }
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,29 @@
+/* Product Card */
+.product-card {
+    border: none;
+    transition: transform 0.3s;
+    margin-bottom: 20px;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-card img {
+    height: 200px;
+    object-fit: cover;
+}
+
+.btn-order-now {
+    background-color: #fd7e14;
+    border-color: #fd7e14;
+    transition: all 0.3s;
+}
+
+.btn-order-now:hover {
+    background-color: #e67e22;
+    border-color: #e67e22;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(253, 126, 20, 0.3);
+}
