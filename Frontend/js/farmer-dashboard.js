@@ -190,17 +190,17 @@
   }
 
   async function loadProducts() {
-    if (isLoading) return;
+    // if (!isLoading) return;
     showLoading(true);
     try {
-      console.log("Starting to fetch products...");
+      // console.log("Starting to fetch products...");
       const response = await fetch(`${BACKEND_URL}/products/farmer/products`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      console.log("Response status:", response.status);
+      // console.log("Response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -211,62 +211,96 @@
       const products = await response.json();
       console.log("Received products:", products);
 
-      const productsTable = document.getElementById("productsTable");
-      if (!productsTable) {
-        console.error("Products table element not found");
-        throw new Error("Products table element not found");
+      const productsGrid = document.getElementById("productsGrid");
+      if (!productsGrid) {
+        console.error("Products grid element not found");
+        throw new Error("Products grid element not found");
       }
 
-      const tbody = productsTable.getElementsByTagName("tbody")[0];
-      if (!tbody) {
-        console.error("Table body element not found");
-        throw new Error("Table body element not found");
-      }
-
-      tbody.innerHTML = "";
+      productsGrid.innerHTML = "";
 
       if (!Array.isArray(products) || products.length === 0) {
-        console.log("No products found");
-        const row = tbody.insertRow();
-        row.innerHTML =
-          '<td colspan="6" class="text-center">No products found</td>';
+        productsGrid.innerHTML = `
+            <div class="col-12 text-center p-5">
+                <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No products found. Start by adding a new product!</p>
+            </div>`;
         return;
       }
 
       console.log("Rendering products...");
-      products.forEach((product) => {
-        console.log("Rendering product:", product);
-        const row = tbody.insertRow();
-        row.innerHTML = `
-                    <td>${product.name || "N/A"}</td>
-                    <td>${product.category || "N/A"}</td>
-                    <td>₹${product.price || 0}</td>
-                    <td>${product.quantity || 0} ${product.unit || ""}</td>
-                    <td>${product.isAvailable ? "Available" : "Not Available"
-          }</td>
-                    <td>
-                        <button class="btn btn-sm btn-primary" onclick="editProduct('${product._id
-          }')">Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteProduct('${product._id
-          }')">Delete</button>
-                    </td>
-                `;
-      });
+      productsGrid.innerHTML = products
+        .map(
+          (product) => `
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 product-card shadow-sm border-0 rounded-4 overflow-hidden">
+                    <div class="position-relative">
+                        <img src="${(product.images && product.images[0]) ||
+            product.imageUrl ||
+            "https://placehold.co/600x400?text=No+Image"
+            }" class="card-img-top" alt="${product.name}" style="height: 250px; object-fit: cover;">
+                        ${product.quantity === 0
+              ? '<span class="position-absolute top-0 end-0 badge bg-danger m-3">Out of Stock</span>'
+              : ""
+            }
+                        <span class="position-absolute top-0 start-0 badge ${product.isAvailable ? "bg-success" : "bg-warning"
+            } m-3">
+                            ${product.isAvailable ? "Available" : "Unavailable"}
+                        </span>
+                    </div>
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h5 class="card-title fw-bold mb-1 fs-4 text-dark">${product.name}</h5>
+                                <p class="text-muted small mb-0"><i class="fas fa-tag me-1"></i>${product.category || "N/A"}</p>
+                            </div>
+                            <h4 class="text-success fw-bold mb-0">₹${product.price}</h4>
+                        </div>
+                        
+                        <p class="card-text text-secondary mb-4 flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            ${product.description}
+                        </p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-light text-dark border">
+                                <i class="fas fa-cubes me-1"></i> Stock: ${product.quantity} ${product.unit}
+                            </span>
+                        </div>
+
+                        <div class="mt-auto d-grid gap-2">
+                             <a href="product-details.html?id=${product._id}" class="btn btn-outline-secondary rounded-pill">
+                                Show Details
+                            </a>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <button class="btn btn-outline-primary w-100 rounded-pill" onclick="editProduct('${product._id}')">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-outline-danger w-100 rounded-pill" onclick="deleteProduct('${product._id}')">
+                                        <i class="fas fa-trash me-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+        )
+        .join("");
       console.log("Products rendered successfully");
     } catch (error) {
       console.error("Error loading products:", error);
-      const productsTable = document.getElementById("productsTable");
-      if (productsTable) {
-        const tbody = productsTable.getElementsByTagName("tbody")[0];
-        if (tbody) {
-          tbody.innerHTML = `
-                        <tr>
-                            <td colspan="6" class="text-center text-danger">
-                                Error loading products: ${error.message}
-                            </td>
-                        </tr>
-                    `;
-        }
+      const productsGrid = document.getElementById("productsGrid");
+      if (productsGrid) {
+        productsGrid.innerHTML = `
+            <div class="col-12 text-center text-danger p-5">
+                <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
+                <p>Error loading products: ${error.message}</p>
+            </div>
+        `;
       }
       alert("Failed to load products: " + error.message);
     } finally {
@@ -331,10 +365,9 @@
     document.getElementById("productForm").reset();
     currentProductId = null;
 
-    // Remove aria-hidden and add inert attribute
+    // Remove aria-hidden
     const modalElement = document.getElementById("productModal");
     modalElement.removeAttribute("aria-hidden");
-    modalElement.setAttribute("inert", "");
 
     modal.show();
 
@@ -355,17 +388,17 @@
     document.getElementById("productDescription").value = product.description;
 
     // Handle image
-    const imageUrl = (product.images && product.images[0]) || product.imageUrl || '';
+    const imageUrl =
+      (product.images && product.images[0]) || product.imageUrl || "";
     document.getElementById("productImage").value = imageUrl;
 
     document.getElementById("productAvailable").checked = product.isAvailable;
 
     currentProductId = product._id;
 
-    // Remove aria-hidden and add inert attribute
+    // Remove aria-hidden
     const modalElement = document.getElementById("productModal");
     modalElement.removeAttribute("aria-hidden");
-    modalElement.setAttribute("inert", "");
 
     modal.show();
 
@@ -462,7 +495,6 @@
       if (modal) {
         const modalElement = document.getElementById("productModal");
         modalElement.setAttribute("aria-hidden", "true");
-        modalElement.removeAttribute("inert");
 
         modal.hide();
       }
