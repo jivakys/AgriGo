@@ -145,13 +145,13 @@
       if (!response.ok) throw new Error("Failed to fetch dashboard data");
 
       const data = await response.json();
-
-      document.getElementById("totalProducts").textContent =
-        data.totalProducts || 0;
+      // document.getElementById("totalProducts").textContent =
+      //   data.totalProducts || 0;
       document.getElementById("pendingOrders").textContent =
         data.pendingOrders || 0;
-      document.getElementById("totalRevenue").textContent = `₹${data.totalRevenue || 0
-        }`;
+      document.getElementById("totalRevenue").textContent = `₹${
+        data.totalRevenue || 0
+      }`;
 
       const recentOrdersTable = document
         .getElementById("recentOrdersTable")
@@ -166,13 +166,15 @@
                         <td>${order.consumerId?.name || "N/A"}</td>
                         <td>₹${order.totalAmount || 0}</td>
                         <td>${order.status || "N/A"}</td>
-                        <td>${order.createdAt
-              ? new Date(order.createdAt).toLocaleDateString()
-              : "N/A"
-            }</td>
+                        <td>${
+                          order.createdAt
+                            ? new Date(order.createdAt).toLocaleDateString()
+                            : "N/A"
+                        }</td>
                         <td>
-                            <button class="btn btn-sm btn-primary" onclick="viewOrder('${order._id
-            }')">View</button>
+                            <button class="btn btn-sm btn-primary" onclick="viewOrder('${
+                              order._id
+                            }')">View</button>
                         </td>
                     `;
         });
@@ -190,17 +192,14 @@
   }
 
   async function loadProducts() {
-    // if (!isLoading) return;
+    if (!isLoading) return;
     showLoading(true);
     try {
-      // console.log("Starting to fetch products...");
       const response = await fetch(`${BACKEND_URL}/products/farmer/products`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      // console.log("Response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -209,7 +208,10 @@
       }
 
       const products = await response.json();
-      console.log("Received products:", products);
+
+      document.getElementById("totalProducts").textContent =
+        products.length || 0;
+      // console.log("Received products:", products);
 
       const productsGrid = document.getElementById("productsGrid");
       if (!productsGrid) {
@@ -228,33 +230,44 @@
         return;
       }
 
-      console.log("Rendering products...");
+      // console.log("Rendering products...");
       productsGrid.innerHTML = products
         .map(
           (product) => `
             <div class="col-md-4 mb-4">
                 <div class="card h-100 product-card shadow-sm border-0 rounded-4 overflow-hidden">
                     <div class="position-relative">
-                        <img src="${(product.images && product.images[0]) ||
-            product.imageUrl ||
-            "https://placehold.co/600x400?text=No+Image"
-            }" class="card-img-top" alt="${product.name}" style="height: 250px; object-fit: cover;">
-                        ${product.quantity === 0
-              ? '<span class="position-absolute top-0 end-0 badge bg-danger m-3">Out of Stock</span>'
-              : ""
-            }
-                        <span class="position-absolute top-0 start-0 badge ${product.isAvailable ? "bg-success" : "bg-warning"
-            } m-3">
+                        <img src="${
+                          (product.images && product.images[0]) ||
+                          product.imageUrl ||
+                          "https://placehold.co/600x400?text=No+Image"
+                        }" class="card-img-top" alt="${
+            product.name
+          }" style="height: 250px; object-fit: cover;">
+                        ${
+                          product.quantity === 0
+                            ? '<span class="position-absolute top-0 end-0 badge bg-danger m-3">Out of Stock</span>'
+                            : ""
+                        }
+                        <span class="position-absolute top-0 start-0 badge ${
+                          product.isAvailable ? "bg-success" : "bg-warning"
+                        } m-3">
                             ${product.isAvailable ? "Available" : "Unavailable"}
                         </span>
                     </div>
                     <div class="card-body d-flex flex-column p-4">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <div>
-                                <h5 class="card-title fw-bold mb-1 fs-4 text-dark">${product.name}</h5>
-                                <p class="text-muted small mb-0"><i class="fas fa-tag me-1"></i>${product.category || "N/A"}</p>
+                                <h5 class="card-title fw-bold mb-1 fs-4 text-dark">${
+                                  product.name
+                                }</h5>
+                                <p class="text-muted small mb-0"><i class="fas fa-tag me-1"></i>${
+                                  product.category || "N/A"
+                                }</p>
                             </div>
-                            <h4 class="text-success fw-bold mb-0">₹${product.price}</h4>
+                            <h4 class="text-success fw-bold mb-0">₹${
+                              product.price
+                            }</h4>
                         </div>
                         
                         <p class="card-text text-secondary mb-4 flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
@@ -263,22 +276,30 @@
                         
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="badge bg-light text-dark border">
-                                <i class="fas fa-cubes me-1"></i> Stock: ${product.quantity} ${product.unit}
+                                <i class="fas fa-cubes me-1"></i> Stock: ${
+                                  product.quantity
+                                } ${product.unit}
                             </span>
                         </div>
 
                         <div class="mt-auto d-grid gap-2">
-                             <a href="product-details.html?id=${product._id}" class="btn btn-outline-secondary rounded-pill">
+                             <a href="product-details.html?id=${
+                               product._id
+                             }" class="btn btn-outline-secondary rounded-pill">
                                 Show Details
                             </a>
                             <div class="row g-2">
                                 <div class="col-6">
-                                    <button class="btn btn-outline-primary w-100 rounded-pill" onclick="editProduct('${product._id}')">
+                                    <button class="btn btn-outline-primary w-100 rounded-pill" onclick="editProduct('${
+                                      product._id
+                                    }')">
                                         <i class="fas fa-edit me-1"></i> Edit
                                     </button>
                                 </div>
                                 <div class="col-6">
-                                    <button class="btn btn-outline-danger w-100 rounded-pill" onclick="deleteProduct('${product._id}')">
+                                    <button class="btn btn-outline-danger w-100 rounded-pill" onclick="deleteProduct('${
+                                      product._id
+                                    }')">
                                         <i class="fas fa-trash me-1"></i> Delete
                                     </button>
                                 </div>
@@ -343,10 +364,12 @@
                     <td>${order.status}</td>
                     <td>${new Date(order.createdAt).toLocaleDateString()}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary" onclick="viewOrder('${order._id
-          }')">View</button>
-                        <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order._id
-          }', 'completed')">Complete</button>
+                        <button class="btn btn-sm btn-primary" onclick="viewOrder('${
+                          order._id
+                        }')">View</button>
+                        <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${
+                          order._id
+                        }', 'completed')">Complete</button>
                     </td>
                 `;
       });

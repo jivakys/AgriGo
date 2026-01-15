@@ -9,115 +9,15 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/products.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-            --secondary-gradient: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            --accent-gradient: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
-            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
+    <link rel="stylesheet" href="./css/farmer-dashboard.css">
 
-        body {
-            background-color: #f4f6f9;
-        }
-
-        .navbar {
-            background: var(--primary-gradient) !important;
-            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
-        }
-
-        .dashboard-card {
-            border: none;
-            border-radius: 15px;
-            color: white;
-            transition: transform 0.3s, box-shadow 0.3s;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--card-shadow);
-        }
-
-        .card-products {
-            background: var(--secondary-gradient);
-        }
-
-        .card-orders {
-            background: var(--accent-gradient);
-        }
-
-        .card-revenue {
-            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
-        }
-
-        .dashboard-card .card-body {
-            padding: 1.5rem;
-        }
-
-        .dashboard-card h5 {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .dashboard-card .card-text {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 0;
-        }
-
-        .dashboard-card i {
-            position: absolute;
-            right: 20px;
-            bottom: 20px;
-            font-size: 4rem;
-            opacity: 0.2;
-        }
-
-        .table-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-        }
-
-        .table-card .card-header {
-            background-color: white;
-            border-bottom: 1px solid #eee;
-            padding: 1.5rem;
-        }
-
-        .table th {
-            border-top: none;
-            color: #7f8c8d;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-        }
-
-        .btn-action {
-            width: 35px;
-            height: 35px;
-            padding: 0;
-            line-height: 35px;
-            text-align: center;
-            border-radius: 50%;
-            margin: 0 2px;
-            transition: all 0.3s;
-        }
-
-        .btn-action:hover {
-            transform: scale(1.1);
-        }
-    </style>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark mb-4">
         <div class="container">
             <a class="navbar-brand fw-bold" href="#">
-                <i class="fas fa-leaf me-2"></i>AgriGo Farmer
+                <i class="fas fa-leaf me-2"></i>AgriGo
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -126,7 +26,7 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link active" href="#" id="dashboardLink"><i class="fas fa-chart-line me-1"></i>
-                            Dashboard</a>
+                            Farmer Dashboard</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" id="productsLink"><i class="fas fa-box me-1"></i> My Products</a>
