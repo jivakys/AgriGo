@@ -237,7 +237,7 @@
       productsGrid.innerHTML = products
         .map(
           (product) => `
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4" id="product-card-${product._id}">
                 <div class="card h-100 product-card shadow-sm border-0 rounded-4 overflow-hidden">
                     <div class="position-relative">
                         <img src="${(product.images && product.images[0]) ||
@@ -477,10 +477,34 @@
       isAvailable,
     };
 
+    const isEditing = currentProductId !== null;
+    let previousCardHTML = "";
+
+    // OPTIMISTIC UI UPDATE
+    if (isEditing) {
+      const cardToCheck = document.getElementById(`product-card-${currentProductId}`);
+      if (cardToCheck) {
+        previousCardHTML = cardToCheck.innerHTML;
+        updateProductCardUI(currentProductId, productData);
+      }
+    }
+
+    // Close modal immediately
+    const modal = bootstrap.Modal.getInstance(document.getElementById("productModal"));
+    if (modal) {
+      const modalElement = document.getElementById("productModal");
+      modalElement.setAttribute("aria-hidden", "true");
+      modal.hide();
+    }
+
+    // Reset form immediately
+    document.getElementById("productForm").reset();
+    const tempId = currentProductId;
+    currentProductId = null;
+
     try {
-      const isEditing = currentProductId !== null;
       const url = isEditing
-        ? `${BACKEND_URL}/products/${currentProductId}`
+        ? `${BACKEND_URL}/products/${tempId}`
         : `${BACKEND_URL}/products`;
       const method = isEditing ? "PUT" : "POST";
 
@@ -498,29 +522,89 @@
         throw new Error(errorData.message || "Failed to save product");
       }
 
-      // Close modal properly
-      const modal = bootstrap.Modal.getInstance(
-        document.getElementById("productModal")
-      );
-      if (modal) {
-        const modalElement = document.getElementById("productModal");
-        modalElement.setAttribute("aria-hidden", "true");
-
-        modal.hide();
+      // If new product, we must reload to show it
+      if (!isEditing) {
+        await loadProducts();
       }
 
-      // Reset form and clear product ID
-      document.getElementById("productForm").reset();
-      currentProductId = null;
+      loadDashboardData();
 
-      await loadProducts();
-      alert("Product saved successfully");
     } catch (error) {
       console.error("Error saving product:", error);
       alert(error.message || "Failed to save product");
+
+      // ROLLBACK UI
+      if (isEditing && previousCardHTML) {
+        const cardToRevert = document.getElementById(`product-card-${tempId}`);
+        if (cardToRevert) {
+          cardToRevert.innerHTML = previousCardHTML;
+        }
+      } else if (isEditing) {
+        loadProducts();
+      }
     } finally {
       showLoading(false);
     }
+  }
+
+  function updateProductCardUI(id, data) {
+    const card = document.getElementById(`product-card-${id}`);
+    if (!card) return;
+
+    const imageUrl = (data.images && data.images[0]) || data.imageUrl || "https://placehold.co/600x400?text=No+Image";
+
+    card.innerHTML = `
+                <div class="card h-100 product-card shadow-sm border-0 rounded-4 overflow-hidden">
+                    <div class="position-relative">
+                        <img src="${imageUrl}" class="card-img-top" alt="${data.name}" style="height: 250px; object-fit: cover;">
+                        ${data.quantity === 0
+        ? '<span class="position-absolute top-0 end-0 badge bg-danger m-3">Out of Stock</span>'
+        : ""
+      }
+                        <span class="position-absolute top-0 start-0 badge ${data.isAvailable ? "bg-success" : "bg-warning"
+      } m-3">
+                            ${data.isAvailable ? "Available" : "Unavailable"}
+                        </span>
+                    </div>
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h5 class="card-title fw-bold mb-1 fs-4 text-dark">${data.name}</h5>
+                                <p class="text-muted small mb-0"><i class="fas fa-tag me-1"></i>${data.category || "N/A"}</p>
+                            </div>
+                            <h4 class="text-success fw-bold mb-0">₹${data.price}</h4>
+                        </div>
+                        
+                        <p class="card-text text-secondary mb-4 flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            ${data.description}
+                        </p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-light text-dark border">
+                                <i class="fas fa-cubes me-1"></i> Stock: ${data.quantity} ${data.unit}
+                            </span>
+                        </div>
+
+                        <div class="mt-auto d-grid gap-2">
+                             <a href="product-details.html?id=${id}" class="btn btn-outline-secondary rounded-pill">
+                                Show Details
+                            </a>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <button class="btn btn-outline-primary w-100 rounded-pill" onclick="editProduct('${id}')">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-outline-danger w-100 rounded-pill" onclick="deleteProduct('${id}')">
+                                        <i class="fas fa-trash me-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+      `;
   }
 
   function handleLogout() {
