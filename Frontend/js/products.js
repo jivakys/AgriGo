@@ -22,6 +22,20 @@ document.addEventListener("DOMContentLoaded", function () {
     if (topCartBtn) {
       topCartBtn.style.display = "none";
     }
+
+    // Add Dashboard Link to Navbar
+    const navbarNav = document.querySelector('.navbar-nav.ms-auto');
+    if (navbarNav) {
+      const dashboardLi = document.createElement('li');
+      dashboardLi.className = 'nav-item';
+      dashboardLi.innerHTML = `
+            <a class="nav-link fw-bold text-success" href="farmer-dashboard.html">
+                <i class="fas fa-chart-line me-1"></i> Dashboard
+            </a>
+        `;
+      // Insert as first item
+      navbarNav.insertBefore(dashboardLi, navbarNav.firstChild);
+    }
   }
 
   let allProducts = [];

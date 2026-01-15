@@ -283,11 +283,7 @@
                         </div>
 
                         <div class="mt-auto d-grid gap-2">
-                             <a href="product-details.html?id=${
-                               product._id
-                             }" class="btn btn-outline-secondary rounded-pill">
-                                Show Details
-                            </a>
+                             
                             <div class="row g-2">
                                 <div class="col-6">
                                     <button class="btn btn-outline-primary w-100 rounded-pill" onclick="editProduct('${
