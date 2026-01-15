@@ -187,7 +187,7 @@
       if (error.message.includes("Failed to fetch")) {
         showBackendError();
       } else {
-        alert("Failed to load dashboard data: " + error.message);
+        Toast.error("Failed to load dashboard data: " + error.message);
       }
     } finally {
       showLoading(false);
@@ -312,7 +312,7 @@
             </div>
         `;
       }
-      alert("Failed to load products: " + error.message);
+      Toast.error("Failed to load products: " + error.message);
     } finally {
       showLoading(false);
     }
@@ -362,7 +362,7 @@
       });
     } catch (error) {
       console.error("Error loading orders:", error);
-      alert("Failed to load orders: " + error.message);
+      Toast.error("Failed to load orders: " + error.message);
     } finally {
       showLoading(false);
     }
@@ -436,32 +436,32 @@
 
     // Validate required fields
     if (!name) {
-      alert("Product name is required");
+      Toast.error("Product name is required");
       showLoading(false);
       return;
     }
     if (!category) {
-      alert("Category is required");
+      Toast.error("Category is required");
       showLoading(false);
       return;
     }
     if (isNaN(price) || price <= 0) {
-      alert("Please enter a valid price");
+      Toast.error("Please enter a valid price");
       showLoading(false);
       return;
     }
     if (isNaN(quantity) || quantity < 0) {
-      alert("Please enter a valid quantity");
+      Toast.error("Please enter a valid quantity");
       showLoading(false);
       return;
     }
     if (!unit) {
-      alert("Unit is required");
+      Toast.error("Unit is required");
       showLoading(false);
       return;
     }
     if (!description) {
-      alert("Description is required");
+      Toast.error("Description is required");
       showLoading(false);
       return;
     }
@@ -526,12 +526,13 @@
       if (!isEditing) {
         await loadProducts();
       }
+      Toast.success("Product saved successfully");
 
       loadDashboardData();
 
     } catch (error) {
       console.error("Error saving product:", error);
-      alert(error.message || "Failed to save product");
+      Toast.error(error.message || "Failed to save product");
 
       // ROLLBACK UI
       if (isEditing && previousCardHTML) {
@@ -627,12 +628,12 @@
       if (!response.ok) throw new Error("Failed to fetch order details");
 
       const order = await response.json();
-      alert(
+      Toast.info(
         `Order Details:\nID: ${order._id}\nCustomer: ${order.consumerId.name}\nStatus: ${order.status}\nTotal: ₹${order.totalAmount}`
       );
     } catch (error) {
       console.error("Error viewing order:", error);
-      alert("Failed to load order details: " + error.message);
+      Toast.error("Failed to load order details: " + error.message);
     } finally {
       showLoading(false);
     }
@@ -655,10 +656,10 @@
 
       await loadOrders();
       await loadDashboardData();
-      alert("Order status updated successfully");
+      Toast.success("Order status updated successfully");
     } catch (error) {
       console.error("Error updating order status:", error);
-      alert("Failed to update order status: " + error.message);
+      Toast.error("Failed to update order status: " + error.message);
     } finally {
       showLoading(false);
     }
@@ -683,7 +684,7 @@
       showEditProductModal(product);
     } catch (error) {
       console.error("Error editing product:", error);
-      alert("Failed to load product details: " + error.message);
+      Toast.error("Failed to load product details: " + error.message);
     } finally {
       showLoading(false);
     }
@@ -706,10 +707,10 @@
 
       await loadProducts();
       await loadDashboardData();
-      alert("Product deleted successfully");
+      Toast.success("Product deleted successfully");
     } catch (error) {
       console.error("Error deleting product:", error);
-      alert("Failed to delete product: " + error.message);
+      Toast.error("Failed to delete product: " + error.message);
     } finally {
       showLoading(false);
     }
