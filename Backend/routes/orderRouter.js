@@ -74,6 +74,9 @@ orderRouter.post("/", async (req, res) => {
       });
     }
 
+    // Clear user's cart
+    userIdToCart.delete(String(consumerId));
+
     res.status(201).json({ message: "Order created successfully", order });
   } catch (error) {
     res
