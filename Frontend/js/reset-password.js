@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const email = urlParams.get("email") || localStorage.getItem("resetEmail");
 
   if (!email) {
-    alert("Email not found. Please start the password reset process again.");
+    Toast.error("Email not found. Please start the password reset process again.");
     window.location.href = "forgot-password.html";
     return;
   }

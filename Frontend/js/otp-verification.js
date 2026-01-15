@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const email = urlParams.get("email") || localStorage.getItem("otpEmail");
 
   if (!email) {
-    alert("Email not found. Please login again.");
+    Toast.error("Email not found. Please login again.");
     window.location.href = "login.html";
     return;
   }
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const otp = otpInput.value.trim();
 
     if (otp.length !== 6) {
-      alert("Please enter a valid 6-digit OTP");
+      Toast.error("Please enter a valid 6-digit OTP");
       return;
     }
 

@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const isPasswordLogin = passwordLogin.checked;
 
       if (!email) {
-        alert("Please enter your email address");
+        Toast.error("Please enter your email address");
         return;
       }
 
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const password = document.getElementById("password").value;
 
           if (!password) {
-            alert("Please enter your password");
+            Toast.error("Please enter your password");
             return;
           }
 
@@ -174,13 +174,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Validate password match
       if (password !== confirmPassword) {
-        alert("Passwords do not match!");
+        Toast.info("Passwords do not match!");
         return;
       }
 
       // Validate password strength
       if (password.length < 6) {
-        alert("Password must be at least 6 characters long!");
+        Toast.info("Password must be at least 6 characters long!");
         return;
       }
 
@@ -219,14 +219,14 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Signup response:", data);
 
         if (response.ok) {
-          alert("Registration successful! Please login.");
+          Toast.success("Registration successful! Please login.");
           window.location.href = "login.html";
         } else {
-          alert(data.message || "Registration failed");
+          Toast.error(data.message || "Registration failed");
         }
       } catch (error) {
         console.error("Signup error:", error);
-        alert("An error occurred during registration. Please try again.");
+        Toast.error("An error occurred during registration. Please try again.");
       }
     });
   }

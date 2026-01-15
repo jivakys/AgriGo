@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   if (!productId) {
-    alert("Product not found");
+    Toast.error("Product not found");
     window.location.href = "products.html";
     return;
   }
@@ -240,10 +240,10 @@ document.addEventListener("DOMContentLoaded", function () {
       modal.hide();
 
       loadProductDetails(); // Reload to show changes
-      alert("Product updated successfully!");
+      Toast.success("Product updated successfully!");
     } catch (error) {
       console.error(error);
-      alert("Error updating product: " + error.message);
+      Toast.error("Error updating product: " + error.message);
     }
   };
 
@@ -260,11 +260,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!response.ok) throw new Error("Failed to delete product");
 
-      alert("Product deleted");
+      Toast.info("Product deleted");
       window.location.href = "products.html";
     } catch (e) {
       console.error(e);
-      alert("Error deleting product");
+      Toast.error("Error deleting product");
     }
   };
 
@@ -284,10 +284,10 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error("Failed to add to cart");
       }
 
-      alert("Product added to cart successfully!");
+      Toast.success("Product added to cart successfully!");
     } catch (error) {
       console.error("Error adding to cart:", error);
-      alert("Failed to add product to cart");
+      Toast.error("Failed to add product to cart");
     }
   };
 

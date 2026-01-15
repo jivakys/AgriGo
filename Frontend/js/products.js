@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
       applyFilters(); // Display products with current filters (if any)
     } catch (error) {
       console.error("Error loading products:", error);
-      alert("Failed to load products");
+      Toast.error("Failed to load products");
     }
   }
 
@@ -177,10 +177,10 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error("Failed to add to cart");
       }
 
-      alert("Product added to cart successfully!");
+      Toast.success("Product added to cart successfully!");
     } catch (error) {
       console.error("Error adding to cart:", error);
-      alert("Failed to add product to cart");
+      Toast.error("Failed to add product to cart");
     }
   };
 
@@ -216,17 +216,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Validate required fields
     if (!name || !description || !category || !unit) {
-      alert("Please fill in all required fields");
+      Toast.error("Please fill in all required fields");
       return;
     }
 
     if (isNaN(price) || price <= 0) {
-      alert("Please enter a valid price");
+      Toast.error("Please enter a valid price");
       return;
     }
 
     if (isNaN(quantity) || quantity < 0) {
-      alert("Please enter a valid quantity");
+      Toast.error("Please enter a valid quantity");
       return;
     }
 
@@ -276,10 +276,10 @@ document.addEventListener("DOMContentLoaded", function () {
       // Reload products
       await loadProducts();
 
-      alert("Product added successfully!");
+      Toast.success("Product added successfully!");
     } catch (error) {
       console.error("Error adding product:", error);
-      alert(error.message || "Failed to add product. Please try again.");
+      Toast.error(error.message || "Failed to add product. Please try again.");
     } finally {
       const submitBtn = document.querySelector("#addProductModal .btn-success");
       if (submitBtn) {

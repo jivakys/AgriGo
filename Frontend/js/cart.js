@@ -71,13 +71,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const slotWindow = document.getElementById('slotWindow').value;
 
     if (!street || !city || !pincode) {
-      alert('Please enter delivery address.');
+      Toast.error('Please enter delivery address.');
       return;
     }
 
     const cartRes = await fetch('/orders/cart', { headers: { Authorization: `Bearer ${token}` } });
     const cart = await cartRes.json();
-    if (!cart.items || !cart.items.length) { alert('Cart is empty'); return; }
+    if (!cart.items || !cart.items.length) { Toast.success('Cart is empty'); return; }
 
     const products = cart.items.map(it => ({ productId: it.product._id, quantity: it.quantity }));
     const body = {
@@ -94,10 +94,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     const data = await res.json();
     if (res.ok) {
-      alert('Order placed successfully');
+      Toast.success('Order placed successfully');
       window.location.href = 'orders.html';
     } else {
-      alert(data.message || 'Failed to place order');
+      Toast.error(data.message || 'Failed to place order');
     }
   });
 

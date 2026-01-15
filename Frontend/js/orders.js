@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
       displayOrders(orders);
     } catch (error) {
       console.error("Error loading orders:", error);
-      alert("Failed to load orders");
+      Toast.error("Failed to load orders");
     }
   }
 
@@ -141,11 +141,11 @@ document.addEventListener("DOMContentLoaded", function () {
         throw new Error("Failed to update order status");
       }
 
-      alert("Order status updated successfully!");
+      Toast.success("Order status updated successfully!");
       loadOrders(); // Refresh orders list
     } catch (error) {
       console.error("Error updating order status:", error);
-      alert("Failed to update order status");
+      Toast.error("Failed to update order status");
     }
   };
 
