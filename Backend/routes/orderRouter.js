@@ -144,7 +144,7 @@ orderRouter.delete("/cart/:productId", async (req, res) => {
 // Get all orders for a consumer
 orderRouter.get("/consumer", async (req, res) => {
   try {
-    const consumerId = req.user._id;
+    const consumerId = req.user.userID || req.user._id;
     const orders = await OrderModel.find({ consumerId })
       .populate("farmerId", "name email phone farmInfo.farmName")
       .populate("products.productId", "name description price unit");
@@ -159,7 +159,7 @@ orderRouter.get("/consumer", async (req, res) => {
 // Get all orders for a farmer
 orderRouter.get("/farmer", farmerAuth, async (req, res) => {
   try {
-    const farmerId = req.user._id;
+    const farmerId = req.user.userID || req.user._id;
     const orders = await OrderModel.find({ farmerId })
       .populate("consumerId", "name email phone")
       .populate("products.productId", "name description price unit");
@@ -185,8 +185,8 @@ orderRouter.get("/:id", async (req, res) => {
 
     // Check if the user is authorized to view this order
     if (
-      order.consumerId._id.toString() !== req.user._id.toString() &&
-      order.farmerId._id.toString() !== req.user._id.toString()
+      order.consumerId._id.toString() !== (req.user.userID || req.user._id).toString() &&
+      order.farmerId._id.toString() !== (req.user.userID || req.user._id).toString()
     ) {
       return res.status(403).json({ message: "Unauthorized access" });
     }
@@ -204,7 +204,7 @@ orderRouter.put("/:id/status", farmerAuth, async (req, res) => {
   try {
     const { status } = req.body;
     const orderId = req.params.id;
-    const farmerId = req.user._id;
+    const farmerId = req.user.userID || req.user._id;
 
     const order = await OrderModel.findOne({ _id: orderId, farmerId });
 
@@ -219,6 +219,15 @@ orderRouter.put("/:id/status", farmerAuth, async (req, res) => {
       { status, updatedAt: Date.now() },
       { new: true }
     );
+
+    // If status is cancelled, restore product quantities
+    if (status === "cancelled") {
+      for (const item of order.products) {
+        await ProductModel.findByIdAndUpdate(item.productId, {
+          $inc: { quantity: item.quantity },
+        });
+      }
+    }
 
     res.status(200).json({
       message: "Order status updated successfully",
@@ -236,7 +245,7 @@ orderRouter.put("/:id/payment", farmerAuth, async (req, res) => {
   try {
     const { paymentStatus } = req.body;
     const orderId = req.params.id;
-    const farmerId = req.user._id;
+    const farmerId = req.user.userID || req.user._id;
 
     const order = await OrderModel.findOne({ _id: orderId, farmerId });
 
@@ -267,7 +276,7 @@ orderRouter.put("/:id/payment", farmerAuth, async (req, res) => {
 orderRouter.put("/:id/cancel", async (req, res) => {
   try {
     const orderId = req.params.id;
-    const consumerId = req.user._id;
+    const consumerId = req.user.userID || req.user._id;
 
     const order = await OrderModel.findOne({ _id: orderId, consumerId });
 
