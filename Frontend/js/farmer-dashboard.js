@@ -144,42 +144,42 @@
 
       if (!response.ok) throw new Error("Failed to fetch dashboard data");
 
-      const data = await response.json();
-      // document.getElementById("totalProducts").textContent =
-      //   data.totalProducts || 0;
-      document.getElementById("pendingOrders").textContent =
-        data.pendingOrders || 0;
-      document.getElementById("totalRevenue").textContent = `₹${data.totalRevenue || 0
-        }`;
+      const orders = await response.json();
+
+      // Calculate stats from orders array
+      const pendingOrders = orders.filter(o => o.status === 'pending').length;
+      const totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+      const recentOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
+
+      document.getElementById("pendingOrders").textContent = pendingOrders;
+      document.getElementById("totalRevenue").textContent = `₹${totalRevenue}`;
 
       const recentOrdersTable = document
         .getElementById("recentOrdersTable")
         .getElementsByTagName("tbody")[0];
       recentOrdersTable.innerHTML = "";
 
-      if (Array.isArray(data.recentOrders)) {
-        data.recentOrders.forEach((order) => {
-          const row = recentOrdersTable.insertRow();
-          row.innerHTML = `
-                        <td>${order._id}</td>
-                        <td>${order.consumerId?.name || "N/A"}</td>
-                        <td>₹${order.totalAmount || 0}</td>
-                        <td>${order.status || "N/A"}</td>
-                        <td>${order.createdAt
-              ? new Date(order.createdAt).toLocaleDateString()
-              : "N/A"
-            }</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" onclick="viewOrder('${order._id
-            }')">View</button>
-                        </td>
-                    `;
-        });
-      }
+      recentOrders.forEach((order) => {
+        const row = recentOrdersTable.insertRow();
+        row.innerHTML = `
+                      <td>${order._id}</td>
+                      <td>${order.consumerId?.name || "N/A"}</td>
+                      <td>₹${order.totalAmount || 0}</td>
+                      <td>${order.status || "N/A"}</td>
+                      <td>${order.createdAt
+            ? new Date(order.createdAt).toLocaleDateString()
+            : "N/A"
+          }</td>
+                      <td>
+                          <button class="btn btn-sm btn-primary" onclick="viewOrder('${order._id
+          }')">View</button>
+                      </td>
+                  `;
+      });
 
       // Render Revenue Chart
       if (typeof Chart !== 'undefined') {
-        renderRevenueChart(data.recentOrders || []);
+        renderRevenueChart(orders);
       }
 
     } catch (error) {
@@ -347,16 +347,26 @@
         const row = ordersTable.insertRow();
         row.innerHTML = `
                     <td>${order._id}</td>
-                    <td>${order.consumerId.name}</td>
-                    <td>${order.products.map((p) => p.name).join(", ")}</td>
+                    <td>${order.consumerId?.name || "N/A"}</td>
+                    <td>${order.products.map((p) => p.productId?.name || "N/A").join(", ")}</td>
                     <td>₹${order.totalAmount}</td>
-                    <td>${order.status}</td>
+                    <td><span class="badge bg-${getStatusBadgeClass(order.status)}">${order.status}</span></td>
                     <td>${new Date(order.createdAt).toLocaleDateString()}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary" onclick="viewOrder('${order._id
-          }')">View</button>
-                        <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order._id
-          }', 'completed')">Complete</button>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-primary" onclick="viewOrder('${order._id}')">View</button>
+                            ${order.status === 'pending' ? `
+                            <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order._id}', 'confirmed')">Confirm</button>
+                            <button class="btn btn-sm btn-danger" onclick="updateOrderStatus('${order._id}', 'cancelled')">Cancel</button>
+                            ` : ''}
+                            ${order.status === 'confirmed' ? `
+                            <button class="btn btn-sm btn-info text-white" onclick="updateOrderStatus('${order._id}', 'out_for_delivery')">Ship</button>
+                            <button class="btn btn-sm btn-danger" onclick="updateOrderStatus('${order._id}', 'cancelled')">Cancel</button>
+                            ` : ''}
+                            ${order.status === 'out_for_delivery' ? `
+                            <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order._id}', 'delivered')">Delivered</button>
+                            ` : ''}
+                        </div>
                     </td>
                 `;
       });
@@ -608,6 +618,25 @@
       `;
   }
 
+  function getStatusBadgeClass(status) {
+    if (!status) return "secondary";
+    switch (status.toLowerCase()) {
+      case "pending":
+        return "warning";
+      case "confirmed":
+        return "primary";
+      case "out_for_delivery":
+        return "info text-white";
+      case "delivered":
+      case "completed":
+        return "success";
+      case "cancelled":
+        return "danger";
+      default:
+        return "secondary";
+    }
+  }
+
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -628,9 +657,65 @@
       if (!response.ok) throw new Error("Failed to fetch order details");
 
       const order = await response.json();
-      Toast.info(
-        `Order Details:\nID: ${order._id}\nCustomer: ${order.consumerId.name}\nStatus: ${order.status}\nTotal: ₹${order.totalAmount}`
-      );
+
+      const productsList = order.products.map(p =>
+        `<tr>
+          <td>${p.productId?.name || 'N/A'}</td>
+          <td>${p.quantity} ${p.productId?.unit || ''}</td>
+          <td>₹${p.price}</td>
+          <td>₹${p.quantity * p.price}</td>
+        </tr>`
+      ).join('');
+
+      const detailsHtml = `
+        <div class="container-fluid">
+          <div class="row mb-4">
+            <div class="col-md-6 border-end">
+              <h6 class="text-muted text-uppercase small fw-bold mb-3">Customer Information</h6>
+              <p class="mb-1"><strong>Name:</strong> ${order.consumerId?.name || 'N/A'}</p>
+              <p class="mb-1"><strong>Phone:</strong> ${order.consumerId?.phone || 'N/A'}</p>
+              <p class="mb-1"><strong>Email:</strong> ${order.consumerId?.email || 'N/A'}</p>
+            </div>
+            <div class="col-md-6 ps-4">
+              <h6 class="text-muted text-uppercase small fw-bold mb-3">Order Information</h6>
+              <p class="mb-1"><strong>Status:</strong> <span class="badge bg-${getStatusBadgeClass(order.status)}">${order.status}</span></p>
+              <p class="mb-1"><strong>Total Amount:</strong> ₹${order.totalAmount}</p>
+              <p class="mb-1"><strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
+            </div>
+          </div>
+          <div class="row mb-4 bg-light p-3 rounded mx-0">
+            <div class="col-12">
+              <h6 class="text-muted text-uppercase small fw-bold mb-2">Delivery Address</h6>
+              <p class="mb-0 text-dark">${order.deliveryAddress ? `${order.deliveryAddress.street}, ${order.deliveryAddress.city} - ${order.deliveryAddress.pincode}` : 'N/A'}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <h6 class="text-muted text-uppercase small fw-bold mb-3">Products</h6>
+              <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Product</th>
+                      <th>Qty</th>
+                      <th>Price</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${productsList}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("orderDetailsBody").innerHTML = detailsHtml;
+      const modal = new bootstrap.Modal(document.getElementById("orderDetailsModal"));
+      modal.show();
+
     } catch (error) {
       console.error("Error viewing order:", error);
       Toast.error("Failed to load order details: " + error.message);
