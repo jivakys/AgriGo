@@ -75,46 +75,11 @@
                     <h5 class="modal-title">Order Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>Order Information</h6>
-                            <p><strong>Order ID:</strong> <span id="modalOrderId"></span></p>
-                            <p><strong>Date:</strong> <span id="modalOrderDate"></span></p>
-                            <p><strong>Status:</strong> <span id="modalOrderStatus"></span></p>
-                            <p><strong>Total Amount:</strong> ₹<span id="modalOrderTotal"></span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <h6>Delivery Information</h6>
-                            <p><strong>Name:</strong> <span id="modalDeliveryName"></span></p>
-                            <p><strong>Address:</strong> <span id="modalDeliveryAddress"></span></p>
-                            <p><strong>Phone:</strong> <span id="modalDeliveryPhone"></span></p>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <h6>Order Items</h6>
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Quantity</th>
-                                        <th>Price</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="modalOrderItems">
-                                    <!-- Order items will be loaded dynamically -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div class="modal-body" id="orderDetailsBody">
+                    <!-- Order details will be loaded dynamically -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <div id="modalActionButtons">
-                        <!-- Action buttons will be loaded dynamically -->
-                    </div>
                 </div>
             </div>
         </div>

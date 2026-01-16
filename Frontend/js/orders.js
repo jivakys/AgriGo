@@ -127,102 +127,78 @@ document.addEventListener("DOMContentLoaded", function () {
       .map((order) => {
         const orderDate = new Date(order.createdAt);
         const statusInfo = getStatusInfo(order.status);
-        const progressSteps = getProgressSteps(order.status);
+        
+        // Calculate estimated arrival (7 days from order date for demo)
+        const estimatedArrival = new Date(orderDate);
+        estimatedArrival.setDate(estimatedArrival.getDate() + 7);
+        
+        // Get origin and destination
+        const origin = user.role === "farmer" 
+          ? (order.farmerId?.name ? `${order.farmerId.name}'s Farm` : "Farm Location")
+          : (order.farmerId?.name ? `${order.farmerId.name}'s Farm` : "Farm Location");
+        const destination = user.role === "farmer"
+          ? (order.deliveryAddress?.city || order.deliveryAddress?.state || "Delivery Location")
+          : (order.deliveryAddress?.city || order.deliveryAddress?.state || "Your Location");
+
+        // Generate product items HTML with images
+        const productItems = order.products.map((item) => {
+          const productImage = item.productId?.images?.[0] || item.productId?.imageUrl || "https://placehold.co/80x80?text=No+Image";
+          return `
+            <div class="order-product-item">
+              <img src="${productImage}" alt="${item.productId?.name || 'Product'}" class="product-thumb">
+              <div class="product-info">
+                <div class="product-name">${item.productId?.name || "N/A"}</div>
+                <div class="product-price">₹${item.price} x${item.quantity}</div>
+                ${item.productId?.unit ? `<div class="product-unit">${item.productId.unit}</div>` : ''}
+              </div>
+            </div>
+          `;
+        }).join("");
 
         return `
-          <div class="card mb-4 shadow-sm order-card">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-              <div>
-                <h5 class="mb-0">Order #${order._id.slice(-8).toUpperCase()}</h5>
-                <small class="text-muted">Placed on ${orderDate.toLocaleDateString("en-IN", {
+          <div class="order-card-compact mb-3">
+            <div class="order-header-compact">
+              <div class="order-id-section">
+                <span class="order-id">#${order._id.slice(-7)}</span>
+                <span class="order-date">Est. Arrival: ${estimatedArrival.toLocaleDateString("en-IN", {
                   day: "numeric",
                   month: "short",
-                  year: "numeric",
-                })} at ${orderDate.toLocaleTimeString("en-IN", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}</small>
+                  year: "numeric"
+                })}</span>
               </div>
-              <span class="badge ${statusInfo.badgeClass} fs-6 px-3 py-2">
-                <i class="${statusInfo.icon} me-1"></i>${statusInfo.label}
+              <span class="badge ${statusInfo.badgeClass} status-badge-compact">
+                ${statusInfo.label}
               </span>
             </div>
-            <div class="card-body">
-              <!-- Order Progress Timeline -->
-              <div class="order-progress mb-4">
-                ${progressSteps}
+            
+            <div class="shipping-route">
+              <div class="route-origin">
+                <i class="fas fa-truck"></i>
+                <span>${origin}</span>
               </div>
-
-              <!-- Order Details -->
-              <div class="row mb-3">
-                <div class="col-md-6">
-                  <h6 class="text-muted mb-2">
-                    <i class="fas fa-user me-2"></i>${user.role === "farmer" ? "Customer" : "Farmer"} Details
-                  </h6>
-                  <p class="mb-1"><strong>Name:</strong> ${
-                    user.role === "farmer"
-                      ? order.consumerId?.name || "N/A"
-                      : order.farmerId?.name || "N/A"
-                  }</p>
-                  <p class="mb-1"><strong>Contact:</strong> ${
-                    user.role === "farmer"
-                      ? order.consumerId?.phone || "N/A"
-                      : order.farmerId?.phone || "N/A"
-                  }</p>
-                  ${user.role === "farmer" && order.deliveryAddress
-                    ? `
-                    <p class="mb-1"><strong>Delivery Address:</strong></p>
-                    <p class="mb-0 small">${order.deliveryAddress.street}, ${order.deliveryAddress.city} - ${order.deliveryAddress.pincode}</p>
-                  `
-                    : ""
-                  }
-                </div>
-                <div class="col-md-6">
-                  <h6 class="text-muted mb-2">
-                    <i class="fas fa-info-circle me-2"></i>Order Summary
-                  </h6>
-                  <p class="mb-1"><strong>Total Amount:</strong> <span class="text-success fs-5">₹${order.totalAmount}</span></p>
-                  <p class="mb-1"><strong>Payment Method:</strong> ${order.paymentMethod?.toUpperCase() || "N/A"}</p>
-                  <p class="mb-0"><strong>Payment Status:</strong> <span class="badge bg-${order.paymentStatus === "paid" ? "success" : "warning"}">${order.paymentStatus || "pending"}</span></p>
-                </div>
+              <div class="route-line">
+                <i class="fas fa-ellipsis-h"></i>
               </div>
-
-              <!-- Products List -->
-              <div class="products-section">
-                <h6 class="text-muted mb-3">
-                  <i class="fas fa-shopping-bag me-2"></i>Products (${order.products.length})
-                </h6>
-                <div class="table-responsive">
-                  <table class="table table-sm">
-                    <thead>
-                      <tr>
-                        <th>Product</th>
-                        <th>Quantity</th>
-                        <th>Unit Price</th>
-                        <th>Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      ${order.products
-                        .map(
-                          (item) => `
-                        <tr>
-                          <td>${item.productId?.name || "N/A"}</td>
-                          <td>${item.quantity} ${item.productId?.unit || ""}</td>
-                          <td>₹${item.price}</td>
-                          <td><strong>₹${item.quantity * item.price}</strong></td>
-                        </tr>
-                      `
-                        )
-                        .join("")}
-                    </tbody>
-                  </table>
-                </div>
+              <div class="route-destination">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${destination}</span>
               </div>
+            </div>
 
-              <!-- Action Buttons -->
-              <div class="mt-3 pt-3 border-top">
+            <div class="order-products-scroll">
+              ${productItems}
+            </div>
+
+            <div class="order-footer-compact">
+              <div class="order-total">
+                <span class="total-amount">₹${order.totalAmount}</span>
+                <span class="item-count">(${order.products.length} ${order.products.length === 1 ? 'Item' : 'Items'})</span>
+              </div>
+              <div class="order-actions-compact">
                 ${getActionButtons(order, user.role)}
+                <button class="btn btn-dark btn-sm" onclick="showOrderDetails('${order._id}')">
+                  Details
+                </button>
               </div>
             </div>
           </div>
@@ -306,72 +282,179 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
   }
 
-  // Get action buttons based on role and status
+  // Get action buttons based on role and status (compact version)
   function getActionButtons(order, role) {
     if (role === "farmer") {
-      // Farmer actions
+      // Farmer actions - compact buttons
       if (order.status === "pending") {
         return `
-          <button class="btn btn-success me-2" onclick="updateOrderStatus('${order._id}', 'confirmed')">
+          <button class="btn btn-success btn-sm me-1" onclick="updateOrderStatus('${order._id}', 'confirmed')" title="Confirm Order">
+            <i class="fas fa-check"></i>
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="updateOrderStatus('${order._id}', 'cancelled')" title="Cancel Order">
+            <i class="fas fa-times"></i>
+          </button>
+        `;
+      } else if (order.status === "confirmed") {
+        return `
+          <button class="btn btn-info btn-sm text-white me-1" onclick="updateOrderStatus('${order._id}', 'out_for_delivery')" title="Mark Out for Delivery">
+            <i class="fas fa-truck"></i>
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="updateOrderStatus('${order._id}', 'cancelled')" title="Cancel Order">
+            <i class="fas fa-times"></i>
+          </button>
+        `;
+      } else if (order.status === "out_for_delivery") {
+        return `
+          <button class="btn btn-success btn-sm" onclick="updateOrderStatus('${order._id}', 'delivered')" title="Mark as Delivered">
+            <i class="fas fa-check-double"></i>
+          </button>
+        `;
+      }
+    } else {
+      // Consumer actions - compact buttons
+      if (order.status === "pending") {
+        return `
+          <button class="btn btn-outline-danger btn-sm" onclick="cancelOrder('${order._id}')" title="Cancel Order">
+            <i class="fas fa-times"></i>
+          </button>
+        `;
+      }
+    }
+    return "";
+  }
+
+  // Show order details in modal
+  window.showOrderDetails = async function (orderId) {
+    try {
+      const endpoint = user.role === "farmer"
+        ? `${BACKEND_URL}/orders/${orderId}`
+        : `${BACKEND_URL}/orders/${orderId}`;
+      
+      const response = await fetch(endpoint, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to load order details");
+      }
+
+      const order = await response.json();
+      const orderDate = new Date(order.createdAt);
+      const statusInfo = getStatusInfo(order.status);
+      const progressSteps = getProgressSteps(order.status);
+
+      // Build modal content
+      const modalContent = `
+        <div class="order-details-modal">
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <h6 class="text-muted text-uppercase small fw-bold mb-3">Order Information</h6>
+              <p class="mb-2"><strong>Order ID:</strong> #${order._id.slice(-7).toUpperCase()}</p>
+              <p class="mb-2"><strong>Date:</strong> ${orderDate.toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+              })} at ${orderDate.toLocaleTimeString("en-IN", {
+                hour: "2-digit",
+                minute: "2-digit"
+              })}</p>
+              <p class="mb-2"><strong>Status:</strong> <span class="badge ${statusInfo.badgeClass}">${statusInfo.label}</span></p>
+              <p class="mb-0"><strong>Total Amount:</strong> <span class="text-success fs-5">₹${order.totalAmount}</span></p>
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-muted text-uppercase small fw-bold mb-3">${user.role === "farmer" ? "Customer" : "Farmer"} Information</h6>
+              <p class="mb-2"><strong>Name:</strong> ${user.role === "farmer" ? (order.consumerId?.name || "N/A") : (order.farmerId?.name || "N/A")}</p>
+              <p class="mb-2"><strong>Contact:</strong> ${user.role === "farmer" ? (order.consumerId?.phone || "N/A") : (order.farmerId?.phone || "N/A")}</p>
+              ${user.role === "farmer" && order.deliveryAddress ? `
+                <p class="mb-2"><strong>Delivery Address:</strong></p>
+                <p class="mb-0 small">${order.deliveryAddress.street}, ${order.deliveryAddress.city} - ${order.deliveryAddress.pincode}</p>
+              ` : ""}
+            </div>
+          </div>
+
+          <div class="order-progress mb-4">
+            ${progressSteps}
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-muted text-uppercase small fw-bold mb-3">Order Items</h6>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead class="table-light">
+                  <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${order.products.map((item) => `
+                    <tr>
+                      <td>${item.productId?.name || "N/A"}</td>
+                      <td>${item.quantity} ${item.productId?.unit || ""}</td>
+                      <td>₹${item.price}</td>
+                      <td><strong>₹${item.quantity * item.price}</strong></td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="border-top pt-3">
+            ${getActionButtonsFull(order, user.role)}
+          </div>
+        </div>
+      `;
+
+      document.getElementById("orderDetailsBody").innerHTML = modalContent;
+      const modal = new bootstrap.Modal(document.getElementById("orderDetailsModal"));
+      modal.show();
+
+    } catch (error) {
+      console.error("Error loading order details:", error);
+      showToast(error.message || "Failed to load order details", "error");
+    }
+  };
+
+  // Get full action buttons for modal
+  function getActionButtonsFull(order, role) {
+    if (role === "farmer") {
+      if (order.status === "pending") {
+        return `
+          <button class="btn btn-success me-2" onclick="updateOrderStatus('${order._id}', 'confirmed'); bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal')).hide();">
             <i class="fas fa-check me-1"></i>Confirm Order
           </button>
-          <button class="btn btn-danger" onclick="updateOrderStatus('${order._id}', 'cancelled')">
+          <button class="btn btn-danger" onclick="updateOrderStatus('${order._id}', 'cancelled'); bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal')).hide();">
             <i class="fas fa-times me-1"></i>Cancel Order
           </button>
         `;
       } else if (order.status === "confirmed") {
         return `
-          <button class="btn btn-info text-white me-2" onclick="updateOrderStatus('${order._id}', 'out_for_delivery')">
+          <button class="btn btn-info text-white me-2" onclick="updateOrderStatus('${order._id}', 'out_for_delivery'); bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal')).hide();">
             <i class="fas fa-truck me-1"></i>Mark Out for Delivery
           </button>
-          <button class="btn btn-danger" onclick="updateOrderStatus('${order._id}', 'cancelled')">
+          <button class="btn btn-danger" onclick="updateOrderStatus('${order._id}', 'cancelled'); bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal')).hide();">
             <i class="fas fa-times me-1"></i>Cancel Order
           </button>
         `;
       } else if (order.status === "out_for_delivery") {
         return `
-          <button class="btn btn-success" onclick="updateOrderStatus('${order._id}', 'delivered')">
+          <button class="btn btn-success" onclick="updateOrderStatus('${order._id}', 'delivered'); bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal')).hide();">
             <i class="fas fa-check-double me-1"></i>Mark as Delivered
           </button>
         `;
-      } else if (order.status === "delivered") {
-        return `
-          <span class="text-success">
-            <i class="fas fa-check-circle me-1"></i>Order completed successfully
-          </span>
-        `;
-      } else if (order.status === "cancelled") {
-        return `
-          <span class="text-danger">
-            <i class="fas fa-times-circle me-1"></i>Order has been cancelled
-          </span>
-        `;
       }
     } else {
-      // Consumer actions
       if (order.status === "pending") {
         return `
-          <button class="btn btn-outline-danger" onclick="cancelOrder('${order._id}')">
+          <button class="btn btn-outline-danger" onclick="cancelOrder('${order._id}'); bootstrap.Modal.getInstance(document.getElementById('orderDetailsModal')).hide();">
             <i class="fas fa-times me-1"></i>Cancel Order
           </button>
-        `;
-      } else if (order.status === "delivered") {
-        return `
-          <span class="text-success">
-            <i class="fas fa-check-circle me-1"></i>Order delivered successfully
-          </span>
-        `;
-      } else if (order.status === "cancelled") {
-        return `
-          <span class="text-danger">
-            <i class="fas fa-times-circle me-1"></i>Order has been cancelled
-          </span>
-        `;
-      } else {
-        return `
-          <span class="text-info">
-            <i class="fas fa-info-circle me-1"></i>Your order is being processed
-          </span>
         `;
       }
     }
