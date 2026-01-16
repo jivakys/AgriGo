@@ -20,7 +20,10 @@
   document
     .getElementById("productsLink")
     .addEventListener("click", showProducts);
-  document.getElementById("ordersLink").addEventListener("click", showOrders);
+  document.getElementById("ordersLink").addEventListener("click", (e) => {
+    e.preventDefault();
+    window.location.href = "orders.html";
+  });
   document.getElementById("logoutBtn").addEventListener("click", handleLogout);
   document
     .getElementById("addProductBtn")
@@ -171,8 +174,9 @@
             : "N/A"
           }</td>
                       <td>
-                          <button class="btn btn-sm btn-primary" onclick="viewOrder('${order._id
-          }')">View</button>
+                          <a href="orders.html" class="btn btn-sm btn-primary">
+                              <i class="fas fa-eye me-1"></i>View Orders
+                          </a>
                       </td>
                   `;
       });
@@ -354,17 +358,29 @@
                     <td>${new Date(order.createdAt).toLocaleDateString()}</td>
                     <td>
                         <div class="btn-group">
-                            <button class="btn btn-sm btn-primary" onclick="viewOrder('${order._id}')">View</button>
+                            <a href="orders.html" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye me-1"></i>View
+                            </a>
                             ${order.status === 'pending' ? `
-                            <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order._id}', 'confirmed')">Confirm</button>
-                            <button class="btn btn-sm btn-danger" onclick="updateOrderStatus('${order._id}', 'cancelled')">Cancel</button>
+                            <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order._id}', 'confirmed')">
+                                <i class="fas fa-check me-1"></i>Confirm
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="updateOrderStatus('${order._id}', 'cancelled')">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </button>
                             ` : ''}
                             ${order.status === 'confirmed' ? `
-                            <button class="btn btn-sm btn-info text-white" onclick="updateOrderStatus('${order._id}', 'out_for_delivery')">Ship</button>
-                            <button class="btn btn-sm btn-danger" onclick="updateOrderStatus('${order._id}', 'cancelled')">Cancel</button>
+                            <button class="btn btn-sm btn-info text-white" onclick="updateOrderStatus('${order._id}', 'out_for_delivery')">
+                                <i class="fas fa-truck me-1"></i>Ship
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="updateOrderStatus('${order._id}', 'cancelled')">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </button>
                             ` : ''}
                             ${order.status === 'out_for_delivery' ? `
-                            <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order._id}', 'delivered')">Delivered</button>
+                            <button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order._id}', 'delivered')">
+                                <i class="fas fa-check-double me-1"></i>Delivered
+                            </button>
                             ` : ''}
                         </div>
                     </td>
