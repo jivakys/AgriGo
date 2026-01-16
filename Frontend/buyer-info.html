@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop Fresh with AgriGo - Farm to Table</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="css/toast.css" />
+    <link rel="stylesheet" href="./css/buyer-info.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="./images/agrigo_logo.png" alt="AgriGo Logo" height="40" />
+                AgriGo
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cart.html">Cart</a></li>
+                    <li class="nav-item"><a class="nav-link" href="orders.html">Orders</a></li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="text-dark me-3">
+                        <i class="fas fa-user-circle me-1"></i>
+                        <span id="buyerName">Buyer</span>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm rounded-pill px-3" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="buyer-hero">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item active">Shop Fresh</li>
+                </ol>
+            </nav>
+
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1>Fresh Farm Products Delivered to Your Doorstep</h1>
+                    <p class="lead">
+                        Browse 10,000+ fresh vegetables, fruits, grains, and dairy products directly from verified local
+                        farmers.
+                        Enjoy farm-fresh quality, fair prices, and doorstep delivery.
+                    </p>
+                    <div>
+                        <a href="products.html" class="btn btn-primary-hero btn-hero">
+                            <i class="fas fa-shopping-basket me-2"></i>Browse Products
+                        </a>
+                        <a href="cart.html" class="btn btn-secondary-hero btn-hero">
+                            <i class="fas fa-shopping-cart me-2"></i>View Cart
+                        </a>
+                        <a href="orders.html" class="btn btn-secondary-hero btn-hero">
+                            <i class="fas fa-box me-2"></i>My Orders
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feature-boxes-grid">
+                        <div class="feature-box">
+                            <div class="feature-box-icon">
+                                <i class="fas fa-carrot"></i>
+                            </div>
+                            <p class="feature-box-text">Fresh Vegetables</p>
+                        </div>
+                        <div class="feature-box">
+                            <div class="feature-box-icon">
+                                <i class="fas fa-apple-alt"></i>
+                            </div>
+                            <p class="feature-box-text">Organic Fruits</p>
+                        </div>
+                        <div class="feature-box">
+                            <div class="feature-box-icon">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <p class="feature-box-text">Farm Grains</p>
+                        </div>
+                        <div class="feature-box">
+                            <div class="feature-box-icon">
+                                <i class="fas fa-cheese"></i>
+                            </div>
+                            <p class="feature-box-text">Dairy Products</p>
+                        </div>
+                        <div class="feature-box">
+                            <div class="feature-box-icon">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <p class="feature-box-text">Fast Delivery</p>
+                        </div>
+                        <div class="feature-box">
+                            <div class="feature-box-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <p class="feature-box-text">Quality Assured</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stat Cards -->
+            <div class="row stat-cards">
+                <div class="col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-card-number">10,000+</div>
+                        <p class="stat-card-label">Fresh Products Available</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-card-number">24 Hours</div>
+                        <p class="stat-card-label">Fast delivery to your doorstep</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Shop on AgriGo Section -->
+    <section class="section-content">
+        <div class="container">
+            <h2 class="section-title">Why Shop on AgriGo</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h5>100% Organic & Fresh</h5>
+                        <p>All products are sourced directly from verified farmers, ensuring freshness and quality
+                            without harmful pesticides.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <h5>Fair & Transparent Pricing</h5>
+                        <p>Direct farm-to-table model eliminates middlemen, giving you the best prices while supporting
+                            local farmers.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <h5>Fast & Reliable Delivery</h5>
+                        <p>Choose your delivery slot and get fresh produce delivered to your doorstep within 24 hours of
+                            ordering.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="section-content section-light">
+        <div class="container">
+            <h2 class="section-title">Shop in 3 Easy Steps</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h5>Browse Products</h5>
+                            <p>Explore our wide range of fresh vegetables, fruits, grains, and dairy products from local
+                                farmers.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h5>Add to Cart & Checkout</h5>
+                            <p>Select your products, choose quantity, add to cart, and proceed to checkout with your
+                                delivery details.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h5>Receive Fresh Produce</h5>
+                            <p>Get your order delivered fresh to your doorstep. Pay online or choose cash on delivery.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Customer Testimonials & Benefits -->
+    <section class="section-content">
+        <div class="container">
+            <h2 class="section-title">What Our Customers Say</h2>
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">
+                            "The vegetables are so fresh! It's like picking them straight from the farm. Delivery is
+                            always on time."
+                        </p>
+                        <p class="testimonial-author">Priya Sharma · Mumbai</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">
+                            "Great prices and quality. I love supporting local farmers while getting the freshest
+                            produce for my family."
+                        </p>
+                        <p class="testimonial-author">Rajesh Kumar · Delhi</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="benefits-section">
+                        <h5>You'll Also Get</h5>
+                        <ul class="benefits-list">
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Multiple payment options (UPI, Card, COD)</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Flexible delivery time slots</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Easy returns & refunds</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Order tracking & notifications</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="benefits-section">
+                        <h5>Quality Promise</h5>
+                        <ul class="benefits-list">
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>100% fresh and organic products</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Verified local farmers only</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>No harmful pesticides or chemicals</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Quality checked before delivery</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons justify-content-center">
+                <a href="products.html" class="btn btn-success action-btn">
+                    <i class="fas fa-shopping-basket me-2"></i>Start Shopping
+                </a>
+                <a href="cart.html" class="btn btn-outline-success action-btn">
+                    <i class="fas fa-shopping-cart me-2"></i>View Cart
+                </a>
+                <a href="orders.html" class="btn btn-outline-secondary action-btn">
+                    <i class="fas fa-box me-2"></i>My Orders
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="text-center">
+                <p>&copy; 2025 Jivak+AgriGo. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/toast.js"></script>
+    <script>
+        // Display user name
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            document.getElementById('buyerName').textContent = user.name || 'Buyer';
+        }
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+
+</html>
