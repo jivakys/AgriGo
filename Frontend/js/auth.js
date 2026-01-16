@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.user.role === "farmer") {
               window.location.href = "seller-info.html";
             } else {
-              window.location.href = "products.html";
+              window.location.href = "buyer-info.html";
             }
           } else {
             showAlert("danger", data.error || "Login failed");
