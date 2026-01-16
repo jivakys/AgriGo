@@ -268,8 +268,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  // Add to cart (copy from products.js)
-  window.addToCart = async function (productId) {
+  // Add to cart
+  window.addToCart = async function (productId, quantity = 1) {
     try {
       const response = await fetch(`${BACKEND_URL}/orders/cart`, {
         method: "POST",
@@ -277,7 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ productId, quantity: 1 }),
+        body: JSON.stringify({ productId, quantity: parseInt(quantity) }),
       });
 
       if (!response.ok) {
