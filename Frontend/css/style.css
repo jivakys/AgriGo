@@ -220,6 +220,59 @@ footer a:hover {
   }
 }
 
+/* Order Tabs (for consumers) */
+.orders-header {
+  margin-bottom: 2rem;
+}
+
+.order-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0;
+  overflow-x: auto;
+}
+
+.order-tab {
+  background: none;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6c757d;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.order-tab:hover {
+  color: #28a745;
+}
+
+.order-tab.active {
+  color: #28a745;
+  border-bottom-color: #28a745;
+  font-weight: 600;
+}
+
+.tab-count {
+  background: #e9ecef;
+  color: #495057;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+  font-weight: 600;
+}
+
+.order-tab.active .tab-count {
+  background: #28a745;
+  color: white;
+}
+
 /* Compact Order Card Styles */
 .order-card-compact {
   background: white;
@@ -228,6 +281,7 @@ footer a:hover {
   padding: 1.25rem;
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 100%;
 }
 
 .order-card-compact:hover {
@@ -238,44 +292,75 @@ footer a:hover {
 .order-header-compact {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid #f0f0f0;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .order-id-section {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0;
+  flex: 1;
 }
 
 .order-id {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: #2c3e50;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+  margin-bottom: 0.4rem;
 }
 
 .order-date {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: #6c757d;
+  margin-top: 0;
+  line-height: 1.4;
 }
 
 .status-badge-compact {
-  font-size: 0.75rem;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-weight: 500;
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: capitalize;
+  border: none;
+  white-space: nowrap;
+}
+
+/* Consumer status badges (matching image) */
+.status-on-deliver {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+
+.status-on-process {
+  background-color: #0d6efd !important;
+  color: white !important;
+}
+
+.status-arrived {
+  background-color: #198754 !important;
+  color: white !important;
+}
+
+.status-cancelled {
+  background-color: #dc3545 !important;
+  color: white !important;
 }
 
 .shipping-route {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  background: #f8f9fa;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  background: #f5f5f5;
   border-radius: 8px;
+  width: 100%;
 }
 
 .route-origin,
@@ -304,7 +389,8 @@ footer a:hover {
   align-items: center;
   justify-content: center;
   color: #adb5bd;
-  font-size: 0.75rem;
+  font-size: 1rem;
+  letter-spacing: 2px;
 }
 
 .order-products-scroll {
@@ -312,7 +398,7 @@ footer a:hover {
   gap: 1rem;
   overflow-x: auto;
   padding: 0.5rem 0;
-  margin-bottom: 1rem;
+  margin: 1.5rem 0;
   scrollbar-width: thin;
   scrollbar-color: #cbd5e0 #f1f5f9;
 }
@@ -339,26 +425,29 @@ footer a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   min-width: 120px;
-  padding: 0.75rem;
-  background: white;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  transition: all 0.2s;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  transition: none;
+  flex-shrink: 0;
 }
 
 .order-product-item:hover {
-  border-color: #28a745;
-  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.15);
+  border: none;
+  box-shadow: none;
+  transform: none;
 }
 
 .product-thumb {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
   border-radius: 8px;
-  background: #f8f9fa;
+  background: #e9ecef;
+  border: none;
 }
 
 .product-info {
@@ -367,19 +456,21 @@ footer a:hover {
 }
 
 .product-name {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   font-weight: 500;
-  color: #2c3e50;
-  margin-bottom: 0.25rem;
-  white-space: nowrap;
+  color: #495057;
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .product-price {
-  font-size: 0.8rem;
-  color: #28a745;
-  font-weight: 600;
+  font-size: 0.85rem;
+  color: #495057;
+  font-weight: 500;
 }
 
 .product-unit {
@@ -391,9 +482,10 @@ footer a:hover {
 .order-footer-compact {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding-top: 0.75rem;
-  border-top: 1px solid #f0f0f0;
+  align-items: flex-end;
+  padding-top: 1.25rem;
+  border-top: none;
+  margin-top: 1.5rem;
 }
 
 .order-total {
@@ -403,9 +495,10 @@ footer a:hover {
 }
 
 .total-amount {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #2c3e50;
+  line-height: 1.2;
 }
 
 .item-count {
@@ -423,6 +516,20 @@ footer a:hover {
   white-space: nowrap;
 }
 
+.order-footer-compact .btn-dark {
+  background-color: #212529;
+  border-color: #212529;
+  padding: 0.6rem 1.75rem;
+  font-weight: 500;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.order-footer-compact .btn-dark:hover {
+  background-color: #000;
+  border-color: #000;
+}
+
 /* Order Details Modal */
 .order-details-modal {
   padding: 0.5rem;
@@ -430,10 +537,38 @@ footer a:hover {
 
 /* Responsive adjustments for compact cards */
 @media (max-width: 768px) {
+  .order-tabs {
+    gap: 0.25rem;
+  }
+
+  .order-tab {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .tab-count {
+    padding: 0.1rem 0.4rem;
+    font-size: 0.75rem;
+    margin-left: 0.25rem;
+  }
+
+  /* Single column on mobile */
+  #ordersContainer.row {
+    margin: 0;
+  }
+
+  #ordersContainer.row > div {
+    padding: 0.5rem;
+  }
+
   .order-header-compact {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
+  }
+
+  .status-badge-compact {
+    align-self: flex-start;
   }
 
   .shipping-route {
@@ -459,14 +594,19 @@ footer a:hover {
 
   .order-actions-compact {
     justify-content: flex-end;
+    flex-wrap: wrap;
   }
 
   .order-product-item {
-    min-width: 100px;
+    min-width: 120px;
   }
 
   .product-thumb {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
+  }
+
+  .total-amount {
+    font-size: 1.2rem;
   }
 }

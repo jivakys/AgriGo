@@ -46,18 +46,29 @@
 
     <!-- Main Content -->
     <div class="container mt-5 pt-4">
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <h2>My Orders</h2>
-                <p class="text-muted">Track and manage your orders</p>
+        <div class="orders-header mb-4">
+            <h2 class="mb-3">My Orders</h2>
+            <!-- Order Status Tabs (for consumers only) -->
+            <div class="order-tabs" id="orderTabs" style="display: none;">
+                <button class="order-tab active" data-status="all" id="filterAll">
+                    All <span class="tab-count" id="countAll">0</span>
+                </button>
+                <button class="order-tab" data-status="shipping" id="filterShipping">
+                    On Shipping <span class="tab-count" id="countShipping">0</span>
+                </button>
+                <button class="order-tab" data-status="delivered" id="filterDelivered">
+                    Arrived <span class="tab-count" id="countDelivered">0</span>
+                </button>
+                <button class="order-tab" data-status="cancelled" id="filterCancelled">
+                    Canceled <span class="tab-count" id="countCancelled">0</span>
+                </button>
             </div>
-            <div class="col-md-6 text-end">
-                <div class="btn-group">
-                    <button class="btn btn-outline-secondary" id="filterAll">All</button>
-                    <button class="btn btn-outline-secondary" id="filterPending">Pending</button>
-                    <button class="btn btn-outline-secondary" id="filterCompleted">Completed</button>
-                    <button class="btn btn-outline-secondary" id="filterCancelled">Cancelled</button>
-                </div>
+            <!-- Filter Buttons (for farmers) -->
+            <div class="btn-group" id="filterButtons" style="display: none;">
+                <button class="btn btn-outline-secondary" id="filterAllBtn">All</button>
+                <button class="btn btn-outline-secondary" id="filterPendingBtn">Pending</button>
+                <button class="btn btn-outline-secondary" id="filterCompletedBtn">Completed</button>
+                <button class="btn btn-outline-secondary" id="filterCancelledBtn">Cancelled</button>
             </div>
         </div>
 

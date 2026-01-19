@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentFilter = "all";
 
   // Initialize
-  loadOrders();
   setupFilters();
+  loadOrders();
 
   // Load orders based on user role
   async function loadOrders() {
@@ -36,53 +36,116 @@ document.addEventListener("DOMContentLoaded", function () {
 
       allOrders = await response.json();
       displayOrders(allOrders);
+      if (user.role === "consumer") {
+        updateFilterTabs();
+      }
     } catch (error) {
       console.error("Error loading orders:", error);
       showToast("Failed to load orders", "error");
     }
   }
 
-  // Setup filter buttons
+  // Setup filter buttons/tabs based on user role
   function setupFilters() {
-    const filterAll = document.getElementById("filterAll");
-    const filterPending = document.getElementById("filterPending");
-    const filterCompleted = document.getElementById("filterCompleted");
-    const filterCancelled = document.getElementById("filterCancelled");
+    if (user.role === "consumer") {
+      // Show tabs for consumers
+      const orderTabs = document.getElementById("orderTabs");
+      const filterButtons = document.getElementById("filterButtons");
+      if (orderTabs) orderTabs.style.display = "flex";
+      if (filterButtons) filterButtons.style.display = "none";
 
-    if (filterAll) {
-      filterAll.addEventListener("click", () => filterOrders("all"));
-    }
-    if (filterPending) {
-      filterPending.addEventListener("click", () => filterOrders("pending"));
-    }
-    if (filterCompleted) {
-      filterCompleted.addEventListener("click", () => filterOrders("delivered"));
-    }
-    if (filterCancelled) {
-      filterCancelled.addEventListener("click", () => filterOrders("cancelled"));
+      // Setup tab listeners
+      const tabs = document.querySelectorAll(".order-tab");
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const status = tab.getAttribute("data-status");
+          filterOrders(status);
+        });
+      });
+    } else {
+      // Show buttons for farmers
+      const orderTabs = document.getElementById("orderTabs");
+      const filterButtons = document.getElementById("filterButtons");
+      if (orderTabs) orderTabs.style.display = "none";
+      if (filterButtons) filterButtons.style.display = "block";
+
+      // Setup button listeners
+      const filterAllBtn = document.getElementById("filterAllBtn");
+      const filterPendingBtn = document.getElementById("filterPendingBtn");
+      const filterCompletedBtn = document.getElementById("filterCompletedBtn");
+      const filterCancelledBtn = document.getElementById("filterCancelledBtn");
+
+      if (filterAllBtn) filterAllBtn.addEventListener("click", () => filterOrders("all"));
+      if (filterPendingBtn) filterPendingBtn.addEventListener("click", () => filterOrders("pending"));
+      if (filterCompletedBtn) filterCompletedBtn.addEventListener("click", () => filterOrders("delivered"));
+      if (filterCancelledBtn) filterCancelledBtn.addEventListener("click", () => filterOrders("cancelled"));
     }
   }
 
   // Filter orders
   function filterOrders(status) {
     currentFilter = status;
-    updateFilterButtons();
+    
+    if (user.role === "consumer") {
+      updateFilterTabs();
+    } else {
+      updateFilterButtons();
+    }
 
     let filteredOrders = allOrders;
-    if (status !== "all") {
+    if (status === "shipping") {
+      // Shipping includes pending, confirmed, and out_for_delivery
+      filteredOrders = allOrders.filter((order) => 
+        order.status === "pending" || 
+        order.status === "confirmed" || 
+        order.status === "out_for_delivery"
+      );
+    } else if (status !== "all") {
       filteredOrders = allOrders.filter((order) => order.status === status);
     }
 
     displayOrders(filteredOrders);
   }
 
-  // Update filter button states
+  // Update filter tab states and counts (for consumers)
+  function updateFilterTabs() {
+    const tabs = document.querySelectorAll(".order-tab");
+    tabs.forEach((tab) => {
+      tab.classList.remove("active");
+    });
+
+    const activeTab = document.querySelector(`[data-status="${currentFilter}"]`);
+    if (activeTab) {
+      activeTab.classList.add("active");
+    }
+
+    // Update counts
+    const shippingCount = allOrders.filter(order => 
+      order.status === "pending" || 
+      order.status === "confirmed" || 
+      order.status === "out_for_delivery"
+    ).length;
+    const deliveredCount = allOrders.filter(order => order.status === "delivered").length;
+    const cancelledCount = allOrders.filter(order => order.status === "cancelled").length;
+
+    const countAllEl = document.getElementById("countAll");
+    const countShippingEl = document.getElementById("countShipping");
+    const countDeliveredEl = document.getElementById("countDelivered");
+    const countCancelledEl = document.getElementById("countCancelled");
+
+    if (countAllEl) countAllEl.textContent = allOrders.length;
+    if (countShippingEl) countShippingEl.textContent = shippingCount;
+    if (countDeliveredEl) countDeliveredEl.textContent = deliveredCount;
+    if (countCancelledEl) countCancelledEl.textContent = cancelledCount;
+  }
+
+  // Update filter button states (for farmers)
   function updateFilterButtons() {
     const buttons = {
-      filterAll: document.getElementById("filterAll"),
-      filterPending: document.getElementById("filterPending"),
-      filterCompleted: document.getElementById("filterCompleted"),
-      filterCancelled: document.getElementById("filterCancelled"),
+      filterAll: document.getElementById("filterAllBtn"),
+      filterPending: document.getElementById("filterPendingBtn"),
+      filterCompleted: document.getElementById("filterCompletedBtn"),
+      filterCancelled: document.getElementById("filterCancelledBtn"),
     };
 
     Object.keys(buttons).forEach((key) => {
@@ -123,7 +186,14 @@ document.addEventListener("DOMContentLoaded", function () {
     // Sort orders by date (newest first)
     orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    ordersContainer.innerHTML = orders
+    // For consumers, use 2-column grid layout
+    if (user.role === "consumer") {
+      ordersContainer.className = "row g-4";
+    } else {
+      ordersContainer.className = "";
+    }
+
+    const orderCards = orders
       .map((order) => {
         const orderDate = new Date(order.createdAt);
         const statusInfo = getStatusInfo(order.status);
@@ -155,8 +225,10 @@ document.addEventListener("DOMContentLoaded", function () {
           `;
         }).join("");
 
+        const cardClass = user.role === "consumer" ? "col-md-6" : "";
         return `
-          <div class="order-card-compact mb-3">
+          <div class="${cardClass}">
+            <div class="order-card-compact mb-3">
             <div class="order-header-compact">
               <div class="order-id-section">
                 <span class="order-id">#${order._id.slice(-7)}</span>
@@ -202,47 +274,87 @@ document.addEventListener("DOMContentLoaded", function () {
               </div>
             </div>
           </div>
+          </div>
         `;
       })
       .join("");
+
+    ordersContainer.innerHTML = orderCards;
   }
 
-  // Get status information
+  // Get status information (different labels for consumers vs farmers)
   function getStatusInfo(status) {
-    const statusMap = {
-      pending: {
-        label: "Pending",
-        icon: "fas fa-clock",
-        badgeClass: "bg-warning text-dark",
-        color: "#ffc107",
-      },
-      confirmed: {
-        label: "Confirmed",
-        icon: "fas fa-check-circle",
-        badgeClass: "bg-primary",
-        color: "#0d6efd",
-      },
-      out_for_delivery: {
-        label: "Out for Delivery",
-        icon: "fas fa-truck",
-        badgeClass: "bg-info",
-        color: "#0dcaf0",
-      },
-      delivered: {
-        label: "Delivered",
-        icon: "fas fa-check-double",
-        badgeClass: "bg-success",
-        color: "#198754",
-      },
-      cancelled: {
-        label: "Cancelled",
-        icon: "fas fa-times-circle",
-        badgeClass: "bg-danger",
-        color: "#dc3545",
-      },
-    };
-
-    return statusMap[status] || statusMap.pending;
+    if (user.role === "consumer") {
+      // Consumer status labels (matching image)
+      const consumerStatusMap = {
+        pending: {
+          label: "On Process",
+          icon: "fas fa-clock",
+          badgeClass: "status-on-process",
+          color: "#0d6efd",
+        },
+        confirmed: {
+          label: "On Process",
+          icon: "fas fa-check-circle",
+          badgeClass: "status-on-process",
+          color: "#0d6efd",
+        },
+        out_for_delivery: {
+          label: "On Deliver",
+          icon: "fas fa-truck",
+          badgeClass: "status-on-deliver",
+          color: "#28a745",
+        },
+        delivered: {
+          label: "Arrived",
+          icon: "fas fa-check-double",
+          badgeClass: "status-arrived",
+          color: "#198754",
+        },
+        cancelled: {
+          label: "Canceled",
+          icon: "fas fa-times-circle",
+          badgeClass: "status-cancelled",
+          color: "#dc3545",
+        },
+      };
+      return consumerStatusMap[status] || consumerStatusMap.pending;
+    } else {
+      // Farmer status labels
+      const farmerStatusMap = {
+        pending: {
+          label: "Pending",
+          icon: "fas fa-clock",
+          badgeClass: "bg-warning text-dark",
+          color: "#ffc107",
+        },
+        confirmed: {
+          label: "Confirmed",
+          icon: "fas fa-check-circle",
+          badgeClass: "bg-primary",
+          color: "#0d6efd",
+        },
+        out_for_delivery: {
+          label: "Out for Delivery",
+          icon: "fas fa-truck",
+          badgeClass: "bg-info",
+          color: "#0dcaf0",
+        },
+        delivered: {
+          label: "Delivered",
+          icon: "fas fa-check-double",
+          badgeClass: "bg-success",
+          color: "#198754",
+        },
+        cancelled: {
+          label: "Cancelled",
+          icon: "fas fa-times-circle",
+          badgeClass: "bg-danger",
+          color: "#dc3545",
+        },
+      };
+      return farmerStatusMap[status] || farmerStatusMap.pending;
+    }
   }
 
   // Get progress steps
@@ -510,6 +622,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       showToast("Order cancelled successfully!", "success");
       await loadOrders();
+      if (user.role === "consumer") {
+        updateFilterTabs();
+      }
     } catch (error) {
       console.error("Error cancelling order:", error);
       showToast(error.message || "Failed to cancel order", "error");
