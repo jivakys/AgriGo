@@ -22,6 +22,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Add role-specific navigation
     if (user.role === "farmer") {
+      // Remove "Cart" link for Farmers
+      const cartLink = Array.from(navbarNav.querySelectorAll(".nav-link")).find(
+        (link) => link.getAttribute("href") === "cart.html"
+      );
+      if (cartLink) {
+        cartLink.parentElement.remove();
+      }
+
       // Add Dashboard link for Farmers
       const dashboardLi = document.createElement("li");
       dashboardLi.className = "nav-item";
@@ -66,11 +74,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 <i class="fas fa-user-circle me-1"></i> ${user.name}
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                ${
-                  user.role === "farmer"
-                    ? '<li><a class="dropdown-item" href="farmer-dashboard.html"><i class="fas fa-chart-line me-2"></i>Dashboard</a></li>'
-                    : '<li><a class="dropdown-item" href="buyer-info.html"><i class="fas fa-home me-2"></i>Home</a></li><li><a class="dropdown-item" href="orders.html"><i class="fas fa-box me-2"></i>My Orders</a></li>'
-                }
+                ${user.role === "farmer"
+        ? '<li><a class="dropdown-item" href="farmer-dashboard.html"><i class="fas fa-chart-line me-2"></i>Dashboard</a></li>'
+        : '<li><a class="dropdown-item" href="buyer-info.html"><i class="fas fa-home me-2"></i>Home</a></li><li><a class="dropdown-item" href="orders.html"><i class="fas fa-box me-2"></i>My Orders</a></li>'
+      }
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="#" id="logoutLink"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
             </ul>
