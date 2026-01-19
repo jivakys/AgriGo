@@ -25,13 +25,19 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <!-- <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li> -->
-          <!-- <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li> -->
-          <!-- <li class="nav-item"><a class="nav-link" href="orders.html">Orders</a></li> -->
           <li class="nav-item"><a class="nav-link" href="farmer-dashboard.html">Dashboard</a></li>
         </ul>
-        <div class="d-flex align-items-center">
+        <!-- <div class="d-flex align-items-center">
           <div class="text-white me-3">
+            <i class="fas fa-user-circle me-1"></i>
+            <span id="farmerName">Farmer</span>
+          </div>
+          <button class="btn btn-light btn-sm rounded-pill px-3" id="logoutBtn">
+            <i class="fas fa-sign-out-alt me-1"></i> Logout
+          </button>
+        </div> -->
+        <div class="d-flex align-items-center">
+          <div class="text-black me-3">
             <i class="fas fa-user-circle me-1"></i>
             <span id="farmerName">Farmer</span>
           </div>
@@ -304,7 +310,22 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/toast.js"></script>
+  <script src="js/toast.js"></script>
+  <script>
+    // Display user name
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      // console.log("useeerrr", user);
+      document.getElementById('farmerName').textContent = user.name || 'Seller';
+    }
+
+    // Logout functionality
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    });
+  </script>
 </body>
 
 </html>
