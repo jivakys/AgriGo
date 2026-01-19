@@ -186,11 +186,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // Sort orders by date (newest first)
     orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    // For consumers, use 2-column grid layout
+    // For consumers, use 3-column grid layout
     if (user.role === "consumer") {
       ordersContainer.className = "row g-4";
     } else {
-      ordersContainer.className = "";
+      ordersContainer.className = "row g-4"; // Also use grid for farmers for consistency
     }
 
     const orderCards = orders
@@ -207,68 +207,76 @@ document.addEventListener("DOMContentLoaded", function () {
           ? (order.farmerId?.name ? `${order.farmerId.name}'s Farm` : "Farm Location")
           : (order.farmerId?.name ? `${order.farmerId.name}'s Farm` : "Farm Location");
         const destination = user.role === "farmer"
-          ? (order.deliveryAddress?.city || order.deliveryAddress?.state || "Delivery Location")
-          : (order.deliveryAddress?.city || order.deliveryAddress?.state || "Your Location");
+          ? (order.deliveryAddress?.city || "Delivery Location")
+          : (order.deliveryAddress?.city || "Your Location");
 
-        // Generate product items HTML with images
+        // Generate product items HTML with images (side-by-side cards)
         const productItems = order.products.map((item) => {
           const productImage = item.productId?.images?.[0] || item.productId?.imageUrl || "https://placehold.co/80x80?text=No+Image";
           return `
-            <div class="order-product-item">
-              <img src="${productImage}" alt="${item.productId?.name || 'Product'}" class="product-thumb">
-              <div class="product-info">
+            <div class="order-product-mini-card">
+              <div class="product-img-wrapper">
+                <img src="${productImage}" alt="${item.productId?.name || 'Product'}" class="product-thumb">
+              </div>
+              <div class="product-details">
                 <div class="product-name">${item.productId?.name || "N/A"}</div>
-                <div class="product-price">₹${item.price} x${item.quantity}</div>
-                ${item.productId?.unit ? `<div class="product-unit">${item.productId.unit}</div>` : ''}
+                <div class="product-price">₹${item.price.toLocaleString('en-IN')} <span class="qty text-muted">x${item.quantity}</span></div>
+                ${item.productId?.unit ? `<div class="product-info-small">Unit: ${item.productId.unit}</div>` : ''}
               </div>
             </div>
           `;
         }).join("");
 
-        const cardClass = user.role === "consumer" ? "col-md-6" : "";
+        const cardClass = "col-lg-4 col-md-6 col-12";
         return `
           <div class="${cardClass}">
-            <div class="order-card-compact mb-3">
+            <div class="order-card-compact h-100">
             <div class="order-header-compact">
               <div class="order-id-section">
-                <span class="order-id">#${order._id.slice(-7)}</span>
-                <span class="order-date">Est. Arrival: ${estimatedArrival.toLocaleDateString("en-IN", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric"
-                })}</span>
+                <span class="order-id-label">Order ID</span>
+                <span class="order-id-value">#${order._id.slice(-7).toUpperCase()}</span>
               </div>
-              <span class="badge ${statusInfo.badgeClass} status-badge-compact">
-                ${statusInfo.label}
-              </span>
+              <div class="arrival-status">
+                <div class="est-arrival-pod">
+                  <span class="pod-label">Estimated arrival:</span>
+                  <span class="pod-date">${estimatedArrival.toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                  })}</span>
+                </div>
+                <span class="badge status-badge-minimal ${statusInfo.badgeClass}">
+                  ${statusInfo.label}
+                </span>
+              </div>
             </div>
             
-            <div class="shipping-route">
-              <div class="route-origin">
-                <i class="fas fa-truck"></i>
-                <span>${origin}</span>
+            <div class="shipping-viz">
+              <div class="route-item">
+                <div class="route-icon origin"><i class="fas fa-truck"></i></div>
+                <span class="route-text">${origin}</span>
               </div>
-              <div class="route-line">
-                <i class="fas fa-ellipsis-h"></i>
+              <div class="route-connector">
+                <div class="dotted-line"></div>
+                <i class="fas fa-caret-right"></i>
               </div>
-              <div class="route-destination">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>${destination}</span>
+              <div class="route-item text-end">
+                <div class="route-icon destination"><i class="fas fa-map-marker-alt"></i></div>
+                <span class="route-text">${destination}</span>
               </div>
             </div>
-
-            <div class="order-products-scroll">
+<div class="order-products-container">
               ${productItems}
             </div>
 
             <div class="order-footer-compact">
-              <div class="order-total">
-                <span class="total-amount">₹${order.totalAmount}</span>
-                <span class="item-count">(${order.products.length} ${order.products.length === 1 ? 'Item' : 'Items'})</span>
+              <div class="order-total-section">
+                <span class="total-val">₹${order.totalAmount.toLocaleString('en-IN')}</span>
+                <span class="item-count-text">(${order.products.length} ${order.products.length === 1 ? 'Item' : 'Items'})</span>
               </div>
               <div class="order-actions-compact">
                 ${getActionButtons(order, user.role)}
-                <button class="btn btn-dark btn-sm" onclick="showOrderDetails('${order._id}')">
+                <button class="btn btn-details-minimal" onclick="showOrderDetails('${order._id}')">
                   Details
                 </button>
               </div>
