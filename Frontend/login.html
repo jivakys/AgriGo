@@ -34,9 +34,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="products.html">Products</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="about.html">About</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a class="btn btn-outline-success ms-2 active" href="login.html">Login</a>
                     </li>
@@ -48,67 +48,110 @@
         </div>
     </nav>
 
-    <!-- Login Form -->
-    <div class="container mt-5">
-        <div class="form-container">
-            <h2 class="text-center mb-4">Login to AgriGo</h2>
+    <!-- Modern Split Login Page with Slideshow -->
+    <div class="auth-wrapper">
+        <div class="auth-main-card">
+            <!-- Left Panel (Slideshow) -->
+            <div class="auth-left">
+                <div class="auth-slides-container">
+                    <!-- Slide 1 -->
+                    <div class="auth-slide active">
+                        <div class="auth-illustration-container">
+                            <img src="images/auth_illustration.png" alt="Eco Illustration">
+                        </div>
+                        <div class="auth-left-content">
+                            <h2>Eco Friendly Farming</h2>
+                            <p>Connecting farmers directly with consumers for fresh, organic produce.</p>
+                        </div>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="auth-slide">
+                        <div class="auth-illustration-container">
+                            <img src="images/slide2.png" alt="Organic Harvest">
+                        </div>
+                        <div class="auth-left-content">
+                            <h2>Organic Harvest</h2>
+                            <p>Handpicked fresh vegetables delivered straight from the farm to your home.</p>
+                        </div>
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="auth-slide">
+                        <div class="auth-illustration-container">
+                            <img src="images/slide3.png" alt="Fast Delivery">
+                        </div>
+                        <div class="auth-left-content">
+                            <h2>Fast Delivery</h2>
+                            <p>Support your local community with quick and sustainable delivery services.</p>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Login Method Toggle -->
-            <div class="text-center mb-4">
-                <div class="btn-group" role="group" aria-label="Login method">
-                    <input type="radio" class="btn-check" name="loginMethod" id="passwordLogin" value="password"
-                        checked>
-                    <label class="btn btn-outline-success" for="passwordLogin">
-                        <i class="fas fa-lock"></i> Password
-                    </label>
-
-                    <input type="radio" class="btn-check" name="loginMethod" id="otpLogin" value="otp">
-                    <label class="btn btn-outline-success" for="otpLogin">
-                        <i class="fas fa-envelope"></i> OTP
-                    </label>
+                <div class="carousel-dots" id="slideDots">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
                 </div>
             </div>
 
-            <form id="loginForm">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="email" required>
-                </div>
-
-                <!-- Password Login Fields -->
-                <div id="passwordFields">
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password">
+            <!-- Right Panel (Form) -->
+            <div class="auth-right">
+                <div class="auth-form-container">
+                    <div class="auth-logo-section">
+                        <img src="images/agrigo_logo.png" alt="AgriGo Logo">
+                        <h3>AGRIGO</h3>
                     </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="rememberMe">
-                        <label class="form-check-label" for="rememberMe">Remember me</label>
+
+                    <!-- Login Method Toggle -->
+                    <div class="auth-method-toggle">
+                        <button type="button" class="auth-toggle-btn active" id="passwordToggle">Password</button>
+                        <button type="button" class="auth-toggle-btn" id="otpToggle">OTP Login</button>
                     </div>
-                </div>
 
-                <!-- OTP Login Fields -->
-                <div id="otpFields" class="d-none">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        We'll send a 6-digit code to your email for verification.
-                    </div>
-                </div>
+                    <form id="loginForm">
+                        <div class="form-group-custom">
+                            <label for="email">Email Address</label>
+                            <input type="email" class="form-control-custom" id="email" placeholder="john@example.com"
+                                required>
+                        </div>
 
-                <button type="submit" class="btn btn-success w-100" id="loginBtn">
-                    <span id="loginBtnText">Login</span>
-                    <span id="loginBtnIcon" class="ms-2">
-                        <i class="fas fa-sign-in-alt"></i>
-                    </span>
-                </button>
+                        <!-- Password Group -->
+                        <div id="passwordFields">
+                            <div class="form-group-custom">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control-custom" id="password"
+                                    placeholder="**********">
+                                <div class="forgot-link-wrapper">
+                                    <a href="forgot-password.html">Forgot password?</a>
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="text-center mt-3">
-                    <a href="forgot-password.html" class="text-success">Forgot Password?</a>
+                        <!-- OTP Group (Hidden by default) -->
+                        <div id="otpFields" class="d-none">
+                            <div class="otp-help-text">
+                                <i class="fas fa-info-circle me-2"></i>
+                                We'll send a secure 6-digit code to your email for instant access.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-auth-primary" id="loginBtn">
+                            <span id="loginBtnText">Sign in</span>
+                        </button>
+
+                        <div class="divider-auth">or</div>
+
+                        <button type="button" class="btn-google-auth">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"
+                                width="18">
+                            Sign in with Google
+                        </button>
+
+                        <div class="auth-footer-text">
+                            Are you new? <a href="signup.html">Create an Account</a>
+                        </div>
+                    </form>
                 </div>
-                <div class="text-center mt-3">
-                    <p>Don't have an account? <a href="signup.html" class="text-success">Sign Up</a></p>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 

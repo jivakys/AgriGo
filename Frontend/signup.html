@@ -51,58 +51,124 @@
         </div>
     </nav>
 
-    <!-- Signup Form -->
-    <div class="container mt-5">
-        <div class="form-container">
-            <h2 class="text-center mb-4">Create an Account</h2>
-            <form id="signupForm">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="name" required>
+    <!-- Modern Split Signup Page -->
+    <div class="auth-wrapper">
+        <div class="auth-main-card">
+            <!-- Left Panel -->
+            <div class="auth-left">
+                <div class="auth-illustration-container">
+                    <img src="images/auth_illustration.png" alt="Agriculture Illustration">
                 </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="email" required>
+                <div class="auth-left-content">
+                    <h2>Join Our Community</h2>
+                    <p>Support local agriculture and get access to the freshest organic products from your neighborhood.
+                    </p>
                 </div>
-                <div class="mb-3">
-                    <label for="phone" class="form-label">Phone Number</label>
-                    <input type="tel" class="form-control" id="phone" required>
+                <div class="carousel-dots">
+                    <span class="dot"></span>
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
                 </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" required>
-                </div>
-                <div class="mb-3">
-                    <label for="confirmPassword" class="form-label">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirmPassword" required>
-                </div>
-                <div class="mb-3">
-                    <label for="role" class="form-label">I want to</label>
-                    <select class="form-select" id="role" required>
-                        <option value="">Select your role</option>
-                        <option value="consumer">Buy Products</option>
-                        <option value="farmer">Sell Products</option>
-                    </select>
-                </div>
-                <div id="farmerFields" class="d-none">
-                    <div class="mb-3">
-                        <label for="farmName" class="form-label">Farm Name</label>
-                        <input type="text" class="form-control" id="farmName">
+            </div>
+
+            <!-- Right Panel -->
+            <div class="auth-right">
+                <div class="auth-form-container">
+                    <div class="auth-logo-section">
+                        <img src="images/agrigo_logo.png" alt="AgriGo Logo">
+                        <h3>AGRIGO</h3>
                     </div>
-                    <div class="mb-3">
-                        <label for="farmLocation" class="form-label">Farm Location</label>
-                        <input type="text" class="form-control" id="farmLocation">
-                    </div>
+
+                    <form id="signupForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group-custom">
+                                    <label for="name">Full Name</label>
+                                    <input type="text" class="form-control-custom" id="name" placeholder="John Doe"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-custom">
+                                    <label for="email">Email Address</label>
+                                    <input type="email" class="form-control-custom" id="email"
+                                        placeholder="john@example.com" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group-custom">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" class="form-control-custom" id="phone"
+                                        placeholder="+91 00000 00000" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-custom">
+                                    <label for="role">I want to</label>
+                                    <select class="form-control-custom" id="role" required style="appearance: auto;">
+                                        <option value="">Select Role</option>
+                                        <option value="consumer">Buy Products</option>
+                                        <option value="farmer">Sell Products</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="farmerFields" class="d-none">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group-custom">
+                                        <label for="farmName">Farm Name</label>
+                                        <input type="text" class="form-control-custom" id="farmName"
+                                            placeholder="Green Farms">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group-custom">
+                                        <label for="farmLocation">Farm Location</label>
+                                        <input type="text" class="form-control-custom" id="farmLocation"
+                                            placeholder="Pune, MH">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group-custom">
+                                    <label for="password">Password</label>
+                                    <input type="password" class="form-control-custom" id="password"
+                                        placeholder="**********" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-custom">
+                                    <label for="confirmPassword">Confirm Password</label>
+                                    <input type="password" class="form-control-custom" id="confirmPassword"
+                                        placeholder="**********" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="terms" required>
+                            <label class="form-check-label small text-muted" for="terms">I agree to the Terms &
+                                Conditions</label>
+                        </div>
+
+                        <button type="submit" class="btn-auth-primary">
+                            Sign up
+                        </button>
+
+                        <div class="auth-footer-text">
+                            Already have an account? <a href="login.html">Sign in</a>
+                        </div>
+                    </form>
                 </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="terms" required>
-                    <label class="form-check-label" for="terms">I agree to the Terms and Conditions</label>
-                </div>
-                <button type="submit" class="btn btn-success w-100">Sign Up</button>
-                <div class="text-center mt-3">
-                    <p>Already have an account? <a href="login.html" class="text-success">Login</a></p>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 
