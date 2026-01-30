@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema(
     otp: { type: String },
     otpExpiry: { type: Date },
     phone: { type: String, required: true },
-    role: { type: String, enum: ["farmer", "consumer"], default: "consumer" },
+    role: { type: String, enum: ["farmer", "consumer", "admin"], default: "consumer" },
     farmInfo: {
       farmName: String,
       products: [
