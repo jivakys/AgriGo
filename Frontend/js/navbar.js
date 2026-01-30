@@ -65,6 +65,16 @@ document.addEventListener("DOMContentLoaded", function () {
           navbarNav.appendChild(cartLi);
         }
       }
+    } else if (user.role === "admin") {
+      // Add Admin Panel link for Admins
+      const adminLi = document.createElement("li");
+      adminLi.className = "nav-item";
+      adminLi.innerHTML = `
+                <a class="nav-link" href="admin-dashboard.html">
+                    <i class="fas fa-user-shield me-1"></i> Admin Panel
+                </a>
+            `;
+      navbarNav.insertBefore(adminLi, navbarNav.firstChild);
     }
 
     const logoutLi = document.createElement("li");
@@ -76,7 +86,9 @@ document.addEventListener("DOMContentLoaded", function () {
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 ${user.role === "farmer"
         ? '<li><a class="dropdown-item" href="farmer-dashboard.html"><i class="fas fa-chart-line me-2"></i>Dashboard</a></li>'
-        : '<li><a class="dropdown-item" href="buyer-info.html"><i class="fas fa-home me-2"></i>Home</a></li><li><a class="dropdown-item" href="orders.html"><i class="fas fa-box me-2"></i>My Orders</a></li>'
+        : user.role === "admin"
+          ? '<li><a class="dropdown-item" href="admin-dashboard.html"><i class="fas fa-user-shield me-2"></i>Admin Panel</a></li>'
+          : '<li><a class="dropdown-item" href="buyer-info.html"><i class="fas fa-home me-2"></i>Home</a></li><li><a class="dropdown-item" href="orders.html"><i class="fas fa-box me-2"></i>My Orders</a></li>'
       }
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="#" id="logoutLink"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
