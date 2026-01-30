@@ -128,7 +128,11 @@ document.addEventListener("DOMContentLoaded", function () {
           if (response.ok) {
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
-            window.location.href = data.user.role === "farmer" ? "seller-info.html" : "buyer-info.html";
+            if (data.user.role === "admin") {
+              window.location.href = "admin-dashboard.html";
+            } else {
+              window.location.href = data.user.role === "farmer" ? "seller-info.html" : "buyer-info.html";
+            }
           } else {
             Toast.error(data.error || "Login failed");
           }
