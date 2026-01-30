@@ -1,5 +1,12 @@
-/* Admin Dashboard Controller */
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is logged in and is an admin
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+
+    if (!token || !user || user.role !== 'admin') {
+        window.location.href = 'login.html';
+        return;
+    }
 
     // --- Mock Data ---
     const users = [
