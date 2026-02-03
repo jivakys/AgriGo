@@ -28,6 +28,7 @@ app.get("/", (req, res) => {
 app.use("/auth/user", userRouter);
 app.use("/products", productRouter);
 app.use("/orders", orderRouter);
+app.use("/admin", require("./routes/adminRouter").adminRouter);
 
 // Start server
 app.listen(process.env.PORT, async () => {
